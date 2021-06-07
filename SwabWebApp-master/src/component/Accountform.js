@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Dropdown, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { Container, Row, Col, Form, Dropdown, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 const Accountform = () => (
   <div>
-    <Container>
+    <Container className="mt-3">
       <Row>
         <Col>
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -51,12 +51,12 @@ const Accountform = () => (
               <Dropdown.Toggle
                 variant="Default"
                 id="dropdown-basic"
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
               >
                 เลือกภาค
               </Dropdown.Toggle>
 
-              <Dropdown.Menu style={{ width: "100%" }}>
+              <Dropdown.Menu style={{ width: '100%' }}>
                 <Dropdown.Item href="#/action-1">N</Dropdown.Item>
                 <Dropdown.Item href="#/action-2">S</Dropdown.Item>
                 <Dropdown.Item href="#/action-1">E</Dropdown.Item>
@@ -73,16 +73,16 @@ const Accountform = () => (
               <Dropdown.Toggle
                 variant="Default"
                 id="dropdown-basic"
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
               >
                 CSC เชียงใหม่
               </Dropdown.Toggle>
 
-              <Dropdown.Menu style={{ width: "100%" }}>
-                <Dropdown.Item style={{ width: "100%" }} href="#/action-1">
+              <Dropdown.Menu style={{ width: '100%' }}>
+                <Dropdown.Item style={{ width: '100%' }} href="#/action-1">
                   ด่วน
                 </Dropdown.Item>
-                <Dropdown.Item style={{ width: "100%" }} href="#/action-2">
+                <Dropdown.Item style={{ width: '100%' }} href="#/action-2">
                   ไม่ด่วน
                 </Dropdown.Item>
               </Dropdown.Menu>

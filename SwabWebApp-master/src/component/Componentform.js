@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Row,
@@ -7,28 +7,84 @@ import {
   Dropdown,
   Button,
   Modal,
-} from "react-bootstrap";
-import styled from "styled-components";
+} from 'react-bootstrap';
+import styled from 'styled-components';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
+// ใช้ axios รับข้อมูลจาก api server
+import Axios from 'axios';
 export default function Orderform() {
-  const [comname, setComname] = useState("");
-  const [brand, setBrand] = useState("");
-  const [spec, setSpec] = useState("");
+  // เก็บ state value ใน form
+  const [cabin_type, setCabin_type] = useState('');
+  const [region, setRegion] = useState('');
+  const [comname, setComname] = useState('');
+  const [brand, setBrand] = useState('');
+  const [spec, setSpec] = useState('');
   const [quality, setQuality] = useState(0);
-  const [lifetime, setLifetime] = useState("");
-  const [supplier, setSupplier] = useState("");
+  const [lifetime, setLifetime] = useState('');
+  const [supplier, setSupplier] = useState('');
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  // เก็บข็อมูลจาก api
+  const [cabin_info, setCabin_info] = useState([]);
+
+  // ดึงข้อมูลจาก api url มาเก็บ
+  const getCabin_info = () => {
+    Axios.get('http://localhost:3003/cabin_info').then((response) => {
+      setCabin_info(response.data);
+    });
+  };
+
+  const now = dayjs().format('YYYY-MM-DD H:mm:ss');
+
+  // ส่งข้อมูล
+  const addComponent = () => {
+    Axios.post('http://localhost:3003/createComponent', {
+      id: null,
+      created_at: now,
+      region: region,
+      cabin_type: cabin_type,
+      cabin_tool: comname,
+      cabin_tool_name: brand,
+      cabin_spec: spec,
+      cabin_toot_amount: quality,
+      cabin_expired: lifetime,
+      cabin_toot_buy_from: supplier,
+    }).then(() => {
+      setCabin_info([
+        ...cabin_info,
+        {
+          id: null,
+          created_at: now,
+          region: region,
+          cabin_type: cabin_type,
+          cabin_tool: comname,
+          cabin_tool_name: brand,
+          cabin_spec: spec,
+          cabin_toot_amount: quality,
+          cabin_expired: lifetime,
+          cabin_toot_buy_from: supplier,
+        },
+      ]);
+    });
+  };
+
   return (
-    <Container style={{ width: "50%" }}>
+    <Container style={{ width: '50%' }}>
       <Form>
         <Row>
           <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="cabin_type">
               <Form.Label>ประเภทห้อง</Form.Label>
-              <select className="form-control" id="paymentMethod">
+              <select
+                className="form-control"
+                id="cabin_type"
+                onChange={(event) => setCabin_type(event.target.value)}
+              >
                 <option value="">เลือกประเภทห้อง</option>
                 <option value="ห้องความดันบวก Positive">
                   ห้องความดันบวก Positive
@@ -42,15 +98,19 @@ export default function Orderform() {
         </Row>
         <Row>
           <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="region">
               <Form.Label>ภาค</Form.Label>
-              <select className="form-control" id="paymentMethod">
+              <select
+                className="form-control"
+                id="region"
+                onChange={(e) => setRegion(e.target.value)}
+              >
                 <option value="">เลือกภาค</option>
-                <option value="ห้องความดันบวก Positive">N</option>
-                <option value="ห้องความดันลบ Negative">S</option>
-                <option value="ห้องความดันบวก Positive">E</option>
-                <option value="ห้องความดันลบ Negative">W</option>
-                <option value="ห้องความดันบวก Positive">NE</option>
+                <option value="N">N</option>
+                <option value="S">S</option>
+                <option value="E">E</option>
+                <option value="W">W</option>
+                <option value="NE">NE</option>
               </select>
             </Form.Group>
           </Col>
@@ -62,7 +122,6 @@ export default function Orderform() {
               <Form.Control
                 type="text"
                 placeholder="อุปกรณ์ เช่น หลอดไฟ"
-                value={comname}
                 onChange={(e) => setComname(e.target.value)}
               />
             </Form.Group>
@@ -74,7 +133,6 @@ export default function Orderform() {
               <Form.Control
                 type="text"
                 placeholder="ยี่ห้อ"
-                value={brand}
                 onChange={(e) => setBrand(e.target.value)}
               />
             </Form.Group>
@@ -86,7 +144,6 @@ export default function Orderform() {
               <Form.Control
                 type="text"
                 placeholder="spec เช่น 24W"
-                value={spec}
                 onChange={(e) => setSpec(e.target.value)}
               />
             </Form.Group>
@@ -98,7 +155,6 @@ export default function Orderform() {
               <Form.Control
                 type="text"
                 placeholder="จำนวน"
-                value={quality}
                 onChange={(e) => setQuality(e.target.value)}
               />
             </Form.Group>
@@ -110,7 +166,6 @@ export default function Orderform() {
               <Form.Control
                 type="text"
                 placeholder="อายุ เช่น 2 เดือน"
-                value={lifetime}
                 onChange={(e) => setLifetime(e.target.value)}
               />
             </Form.Group>
@@ -122,7 +177,6 @@ export default function Orderform() {
               <Form.Control
                 type="text"
                 placeholder="แหล่งที่ซื้อ"
-                value={supplier}
                 onChange={(e) => setSupplier(e.target.value)}
               />
             </Form.Group>
@@ -140,6 +194,8 @@ export default function Orderform() {
           <Modal.Title>serial number ใหม่</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>type: {cabin_type}</p>
+          <p>ภาค: {region}</p>
           <p>อุปกรณ์ : {comname}</p>
           <p>ยี่ห้อ : {brand}</p>
           <p>spec : {spec}</p>
@@ -148,11 +204,53 @@ export default function Orderform() {
           <p>แหล่งที่ซื้อ : {supplier}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              handleClose();
+            }}
+          >
             Close
+          </Button>
+          <Button
+            variant="success"
+            onClick={() => {
+              handleClose();
+              addComponent();
+            }}
+          >
+            Save
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* show data from api */}
+
+      <div className="cabin list mt-3 mb-3">
+        <Button onClick={getCabin_info}>show all data</Button>
+        {cabin_info.map((val, key) => {
+          return (
+            <div className="card mt-3" key={val.id}>
+              <div className="card-body text-left">
+                <p className="card-text">region: {val.region}</p>
+                <p className="card-text">cabin_type: {val.cabin_type}</p>
+                <p className="card-text">cabin_tool: {val.cabin_tool}</p>
+                <p className="card-text">
+                  cabin_tool_name: {val.cabin_tool_name}
+                </p>
+                <p className="card-text">cabin_spec: {val.cabin_spec}</p>
+                <p className="card-text">
+                  cabin_toot_amount: {val.cabin_toot_amount}
+                </p>
+                <p className="card-text">cabin_expired: {val.cabin_expired}</p>
+                <p className="card-text">
+                  cabin_toot_buy_from: {val.cabin_toot_buy_from}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </Container>
   );
 }
