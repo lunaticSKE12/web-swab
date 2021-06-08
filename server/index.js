@@ -60,6 +60,36 @@ app.post('/createComponent', (req, res) => {
   );
 });
 
+app.get('/cabin_order', (req, res) => {
+  db.query('SELECT * FROM cabin_order', (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+app.get('/create_order', (req, res) => {
+  db.query('SELECT * FROM create_order', (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+app.get('/user_account', (req, res) => {
+  db.query('SELECT * FROM user_account', (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 app.listen('3003', () => {
   console.log('Server is running on port 3003');
 });
