@@ -1,17 +1,17 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const mysql = require('mysql');
-const cors = require('cors');
+const mysql = require("mysql");
+const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'swab_test',
-  port: '8889',
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database: "swab_test",
+  port: "8889",
   // host: "localhost",
   // user: "root",
   // password: "",
@@ -19,8 +19,8 @@ const db = mysql.createConnection({
   // port: "3306",
 });
 
-app.get('/cabin_info', (req, res) => {
-  db.query('SELECT * FROM cabin_info', (err, result) => {
+app.get("/cabin_info", (req, res) => {
+  db.query("SELECT * FROM cabin_info", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -29,7 +29,7 @@ app.get('/cabin_info', (req, res) => {
   });
 });
 
-app.post('/createComponent', (req, res) => {
+app.post("/createComponent", (req, res) => {
   const id = req.body.id;
   const created_at = req.body.created_at;
   const region = req.body.region;
@@ -42,7 +42,7 @@ app.post('/createComponent', (req, res) => {
   const cabin_toot_buy_from = req.body.cabin_toot_buy_from;
 
   db.query(
-    'INSERT INTO cabin_info (id, created_at,region, cabin_type, cabin_tool, cabin_tool_name, cabin_spec, cabin_toot_amount, cabin_expired, cabin_toot_buy_from) VALUES(?,?,?,?,?,?,?,?,?,?)',
+    "INSERT INTO cabin_info (id, created_at,region, cabin_type, cabin_tool, cabin_tool_name, cabin_spec, cabin_toot_amount, cabin_expired, cabin_toot_buy_from) VALUES(?,?,?,?,?,?,?,?,?,?)",
     [
       id,
       created_at,
@@ -59,12 +59,12 @@ app.post('/createComponent', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.send('Inserted');
+        res.send("Inserted");
       }
     }
   );
 });
-app.post('/create_user_account', (req, res) => {
+app.post("/create_user_account", (req, res) => {
   const id = req.body.id;
   const first_name = req.body.first_name;
   const last_name = req.body.last_name;
@@ -79,7 +79,7 @@ app.post('/create_user_account', (req, res) => {
   const role = req.body.role;
 
   db.query(
-    'INSERT INTO user_account (id, first_name, last_name, phone_number, email, supervisor_email, region, csc, username, password, create_at,role) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
+    "INSERT INTO user_account (id, first_name, last_name, phone_number, email, supervisor_email, region, csc, username, password, create_at,role) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
     [
       id,
       first_name,
@@ -98,12 +98,11 @@ app.post('/create_user_account', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.send('Inserted');
+        res.send("Inserted");
       }
     }
   );
 });
-<<<<<<< HEAD
 
 app.post("/create_cabin_order", (req, res) => {
   const id = req.body.id;
@@ -155,10 +154,6 @@ app.post("/create_cabin_order", (req, res) => {
 
 app.get("/cabin_order", (req, res) => {
   db.query("SELECT * FROM cabin_order", (err, result) => {
-=======
-app.get('/cabin_order', (req, res) => {
-  db.query('SELECT * FROM cabin_order', (err, result) => {
->>>>>>> d02ea0f405af1a018d01b88c0bb26c7563fa0a90
     if (err) {
       console.log(err);
     } else {
@@ -167,7 +162,6 @@ app.get('/cabin_order', (req, res) => {
   });
 });
 
-<<<<<<< HEAD
 app.get("/selected_cabin_info", (req, res) => {
   db.query("SELECT * FROM cabin_info WHERE id = ?", id, (err, result) => {
     if (err) {
@@ -179,11 +173,8 @@ app.get("/selected_cabin_info", (req, res) => {
 });
 
 app.delete("/delete_account/:id", (req, res) => {
-=======
-app.delete('/delete_account/:id', (req, res) => {
->>>>>>> d02ea0f405af1a018d01b88c0bb26c7563fa0a90
   const id = req.params.id;
-  db.query('DELETE FROM user_account WHERE id = ?', id, (err, result) => {
+  db.query("DELETE FROM user_account WHERE id = ?", id, (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -192,8 +183,8 @@ app.delete('/delete_account/:id', (req, res) => {
   });
 });
 
-app.get('/create_order', (req, res) => {
-  db.query('SELECT * FROM create_order', (err, result) => {
+app.get("/create_order", (req, res) => {
+  db.query("SELECT * FROM create_order", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -202,8 +193,8 @@ app.get('/create_order', (req, res) => {
   });
 });
 
-app.get('/user_account', (req, res) => {
-  db.query('SELECT * FROM user_account', (err, result) => {
+app.get("/user_account", (req, res) => {
+  db.query("SELECT * FROM user_account", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -212,6 +203,6 @@ app.get('/user_account', (req, res) => {
   });
 });
 
-app.listen('3003', () => {
-  console.log('Server is running on port 3003');
+app.listen("3003", () => {
+  console.log("Server is running on port 3003");
 });
