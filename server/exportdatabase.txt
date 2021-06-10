@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Jun 08, 2021 at 06:10 AM
+-- Generation Time: Jun 10, 2021 at 09:48 AM
 -- Server version: 5.7.32
 -- PHP Version: 7.4.12
 
@@ -162,7 +162,7 @@ ALTER TABLE `cabin_order`
 --
 ALTER TABLE `create_order`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `order_serial_number` (`cabin_serial_number`);
+  ADD UNIQUE KEY `cabin_serial_number` (`cabin_serial_number`) USING BTREE;
 
 --
 -- Indexes for table `role`
@@ -208,4 +208,4 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `user_account`
 --
 ALTER TABLE `user_account`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
