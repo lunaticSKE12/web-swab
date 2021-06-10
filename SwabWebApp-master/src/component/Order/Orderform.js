@@ -9,7 +9,8 @@ import {
   Modal,
 } from "react-bootstrap";
 import styled from "styled-components";
-
+import Axios from "axios";
+import dayjs from "dayjs";
 export default function Orderform() {
   const [hosName, setHosName] = useState("");
   const [cusName, setCusName] = useState("");
@@ -22,11 +23,67 @@ export default function Orderform() {
   const [group, setGroup] = useState("");
   const [quality, setQuality] = useState(0);
   const [supplier, setSupplier] = useState("");
-
+  const [donate, setDonate] = useState("");
+  const [serial, setSerial] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  const [cabin_order_list, setCabinOrderList] = useState([]);
+  const now = dayjs().format("YYYY-MM-DD H:mm:ss");
   const [show, setShow] = useState(false);
-
+  const [province, setProvince] = useState("");
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const handleOnChange = () => {
+    setIsChecked(!isChecked);
+    isChecked ? setDonate("Yes") : setDonate("No");
+  };
+  const getCabinOrder = () => {
+    Axios.get("http://localhost:3003/cabin_order").then((response) => {
+      setCabinOrderList(response.data);
+    });
+  };
+
+  const addCabinOrder = () => {
+    Axios.post("http://localhost:3003/create_cabin_order", {
+      id: null,
+      created_at: now,
+      hospital_name: hosName,
+      province: province,
+      customer_name: cusName,
+      customer_phone: phoneNum,
+      customer_email: email,
+      cabin_type: roomType,
+      express: need,
+      deliver_date: sendDate,
+      sequence: rangeSend,
+      vendor_group: group,
+      amount: quality,
+      donate: donate,
+      vendor_name: supplier,
+      cabin_serial_number: serial,
+    }).then(() => {
+      setCabinOrderList([
+        ...cabin_order_list,
+        {
+          id: null,
+          created_at: now,
+          hospital_name: hosName,
+          province: province,
+          customer_name: cusName,
+          customer_phone: phoneNum,
+          customer_email: email,
+          cabin_type: roomType,
+          express: need,
+          deliver_date: sendDate,
+          sequence: rangeSend,
+          vendor_group: group,
+          amount: quality,
+          donate: donate,
+          vendor_name: supplier,
+          cabin_serial_number: serial,
+        },
+      ]);
+    });
+  };
   return (
     <Container style={{ backgroundColor: "white !important" }}>
       <Form>
@@ -89,12 +146,8 @@ export default function Orderform() {
                 onChange={(e) => setRoomType(e.target.value)}
               >
                 <option value="">เลือกประเภทห้อง</option>
-                <option value="ห้องความดันบวก Positive">
-                  ห้องความดันบวก Positive
-                </option>
-                <option value="ห้องความดันลบ Negative">
-                  ห้องความดันลบ Negative
-                </option>
+                <option value="P">ห้องความดันบวก Positive</option>
+                <option value="N">ห้องความดันลบ Negative</option>
               </select>
             </Form.Group>
           </Col>
@@ -125,7 +178,23 @@ export default function Orderform() {
               onChange={(e) => setSendDate(e.target.value)}
             ></input>
           </Col>
-          <Col></Col>
+          <Col>
+            <Form.Group className="mb-3" controlId="region">
+              <Form.Label>ภาค</Form.Label>
+              <select
+                className="form-control"
+                id="region"
+                onChange={(e) => setProvince(e.target.value)}
+              >
+                <option value="">เลือกภาค</option>
+                <option value="Chiang Mai">เชียงใหม่</option>
+                <option value="Bangkok">กรุงเทพมหานคร</option>
+                <option value="Nonthaburi">นนทบุรี</option>
+                <option value="SamutPrakarn">สมุทรปราการ</option>
+                <option value="Chachoengsao">ฉะเชิงเทรา</option>
+              </select>
+            </Form.Group>
+          </Col>
         </Row>
         <br></br>
         <Row>
@@ -168,7 +237,11 @@ export default function Orderform() {
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>บริจาค</Form.Label>
               <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="บริจาค" />
+                <Form.Check
+                  type="checkbox"
+                  label="บริจาค"
+                  onChange={handleOnChange}
+                />
               </Form.Group>
             </Form.Group>
           </Col>
@@ -185,10 +258,27 @@ export default function Orderform() {
               />
             </Form.Group>
           </Col>
-          <Col></Col>
+          <Col>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>เลขตู้</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="ผู้ผลิต"
+                value={serial}
+                onChange={(e) => setSerial(e.target.value)}
+              />
+            </Form.Group>
+          </Col>
         </Row>
       </Form>
-      <Button onClick={handleShow}>Submit</Button>
+      <Button
+        onClick={() => {
+          handleShow();
+          addCabinOrder();
+        }}
+      >
+        Submit
+      </Button>
       <Modal
         show={show}
         onHide={handleClose}
@@ -209,6 +299,7 @@ export default function Orderform() {
           <p>ลำดับการส่ง : {rangeSend}</p>
           <p>Group : {group}</p>
           <p>จำนวน : {quality}</p>
+          <p>บริจาคหรือไม่ : {isChecked}</p>
           <p>ผู้ผลิค : {supplier}</p>
         </Modal.Body>
       </Modal>

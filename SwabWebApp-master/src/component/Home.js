@@ -12,6 +12,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { useState } from "react";
 import { Accordion, Col, Form, Modal, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Axios from "axios";
 import {
   faFilter,
   faSearch,
@@ -31,6 +32,18 @@ function Home() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [cabin_order_list, setCabinOrderList] = useState([]);
+  const [cabin_info, setCabin_info] = useState([]);
+  const getCabinOrder = () => {
+    Axios.get("http://localhost:3003/create_order").then((response) => {
+      setCabinOrderList(response.data);
+    });
+  };
+  const getCabin_info = () => {
+    Axios.get("http://localhost:3003/cabin_info").then((response) => {
+      setCabin_info(response.data);
+    });
+  };
   return (
     <div className="container">
       <CardGroup className="mt-3 ">
@@ -80,6 +93,14 @@ function Home() {
         >
           <Dropdown.Item href="#/action-1">CSC เชียงใหม่</Dropdown.Item>
         </DropdownButton>
+        <Button
+          onClick={() => {
+            getCabinOrder();
+            getCabin_info();
+          }}
+        >
+          show all data
+        </Button>
       </ButtonGroup>
 
       <Tabs
@@ -240,6 +261,78 @@ function Home() {
                 </Card.Body>
               </Accordion.Collapse>
             </Card>
+            {cabin_order_list.map((val, key) => {
+              return (
+                <Card>
+                  <Card.Header>
+                    <Table responsive style={{ borderBottom: "2px" }}>
+                      <tbody>
+                        <tr style={{ borderBottom: "2px" }}>
+                          <td>
+                            <Accordion.Toggle
+                              as={Button}
+                              variant="link"
+                              eventKey="3"
+                            >
+                              <FontAwesomeIcon icon={faCaretDown} />
+                            </Accordion.Toggle>
+                            {val.cabin_serial_number}
+                          </td>
+                          <td>{val.vendor_name}</td>
+                          <td>{val.cabin_type}</td>
+                          <td>{val.created_at}</td>
+                          <td>
+                            {val.hospital_name} {val.customer_name}
+                            {val.customer_phone} <br />
+                            {val.customer_email}
+                          </td>
+                          <td>{val.deliver_date}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="3">
+                    <Card.Body>
+                      {cabin_info.map((val, key) => {
+                        return (
+                          <Table responsive style={{ borderBottom: "2px" }}>
+                            <thead>
+                              <tr style={{ borderBottom: "2px" }}>
+                                <th>ประเภทห้อง</th>
+                                <th>อุปกรณ์</th>
+                                <th>ยี่ห้อ</th>
+                                <th>spec</th>
+                                <th>จำนวน</th>
+                                <th>วันที่เปลี่ยนล่าสุด</th>
+                                <th>แหล่งที่ซื้อ</th>
+                                <th>กำหนดเปลี่ยนครั้งถัดไป</th>
+                                <th> </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr style={{ borderBottom: "2px" }}>
+                                <td>{val.cabin_type}</td>
+                                <td>{val.cabin_tool}</td>
+                                <td>{val.cabin_tool_name}</td>
+                                <td>{val.cabin_spec}</td>
+                                <td>{val.cabin_toot_amount}</td>
+                                <td>{val.cabin_expired}</td>
+                                <th> {val.cabin_toot_buy_from}</th>
+                                <td>{val.cabin_expired}</td>
+
+                                <th>
+                                  <Button onClick={handleShow}>แก้ไข</Button>{" "}
+                                </th>
+                              </tr>
+                            </tbody>
+                          </Table>
+                        );
+                      })}
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              );
+            })}
           </Accordion>
         </Tab>
         <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่">

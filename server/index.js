@@ -98,8 +98,67 @@ app.post("/create_user_account", (req, res) => {
     }
   );
 });
+
+app.post("/create_cabin_order", (req, res) => {
+  const id = req.body.id;
+  const created_at = req.body.created_at;
+  const hospital_name = req.body.hospital_name;
+  const province = req.body.province;
+  const customer_name = req.body.customer_name;
+  const customer_phone = req.body.customer_phone;
+  const customer_email = req.body.customer_email;
+  const cabin_type = req.body.cabin_type;
+  const express = req.body.express;
+  const deliver_date = req.body.deliver_date;
+  const sequence = req.body.sequence;
+  const vendor_group = req.body.vendor_group;
+  const amount = req.body.amount;
+  const donate = req.body.donate;
+  const vendor_name = req.body.vendor_name;
+  const cabin_serial_number = req.body.cabin_serial_number;
+
+  db.query(
+    "INSERT INTO create_order(id, created_at, hospital_name,province, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    [
+      id,
+      created_at,
+      hospital_name,
+      province,
+      customer_name,
+      customer_phone,
+      customer_email,
+      cabin_type,
+      express,
+      deliver_date,
+      sequence,
+      vendor_group,
+      amount,
+      donate,
+      vendor_name,
+      cabin_serial_number,
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Inserted");
+      }
+    }
+  );
+});
+
 app.get("/cabin_order", (req, res) => {
   db.query("SELECT * FROM cabin_order", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+app.get("/selected_cabin_info", (req, res) => {
+  db.query("SELECT * FROM cabin_info WHERE id = ?", id, (err, result) => {
     if (err) {
       console.log(err);
     } else {
