@@ -20,13 +20,30 @@ import {
   faCaretDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-
+import Axios from "axios";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 export default function Account() {
   const [show, setShow] = useState(false);
-
+  const [accountlist, setAccountList] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const deleteAccount = (id) => {
+    Axios.delete(`http://localhost:3003/delete_account/${id}`).then(
+      (response) => {
+        setAccountList(
+          accountlist.filter((val) => {
+            return val.id != id;
+          })
+        );
+      }
+    );
+  };
+  const getAccount = () => {
+    Axios.get("http://localhost:3003/user_account").then((response) => {
+      setAccountList(response.data);
+    });
+  };
+
   return (
     <Container>
       <Form>
@@ -46,6 +63,7 @@ export default function Account() {
               <FontAwesomeIcon icon={faUserAlt} /> เพิ่ม Account
             </Button>
           </Link>
+          <Button onClick={getAccount}>Refresh</Button>
         </Row>
       </Form>
       <br />
@@ -77,6 +95,33 @@ export default function Account() {
                 </Button>
               </td>
             </tr>
+            {accountlist.map((val, key) => {
+              return (
+                <tr>
+                  <td>
+                    {val.first_name}
+                    {val.last_name}
+                  </td>
+                  <td>{val.email}</td>
+                  <td>{val.phone_number}</td>
+                  <td>{val.supervisor_email}</td>
+                  <td>{val.region}</td>
+                  <td>{val.csc}</td>
+                  <td>
+                    {" "}
+                    <Button
+                      variant="danger"
+                      onClick={() => {
+                        handleClose();
+                        deleteAccount(val.id);
+                      }}
+                    >
+                      ลบ account
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </Table>
       </div>
@@ -110,9 +155,7 @@ export default function Account() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={handleClose}>
-            Save changes
-          </Button>
+          <Button variant="danger">Save changes</Button>
         </Modal.Footer>
       </Modal>
     </Container>
