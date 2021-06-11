@@ -1,34 +1,35 @@
-import React from "react";
-import Card from "react-bootstrap/Card";
-import CardGroup from "react-bootstrap/CardGroup";
-import Tabs from "react-bootstrap/Tabs";
-import Tab from "react-bootstrap/Tab";
-import Table from "react-bootstrap/Table";
-import Badge from "react-bootstrap/Badge";
-import Button from "react-bootstrap/Button";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { useState } from "react";
-import { Accordion, Col, Form, Modal, Row } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
+import Table from 'react-bootstrap/Table';
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import { useState } from 'react';
+import { Accordion, Col, Form, Modal, Row } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Axios from 'axios';
 
 import {
   faFilter,
   faSearch,
   faUserAlt,
   faCaretDown,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 function Home() {
-  const [key, setKey] = useState("all");
-  const [sendDate, setSendDate] = useState("");
-  const [comname, setComname] = useState("");
-  const [brand, setBrand] = useState("");
-  const [spec, setSpec] = useState("");
+  const [key, setKey] = useState('all');
+  const [sendDate, setSendDate] = useState('');
+  const [comname, setComname] = useState('');
+  const [brand, setBrand] = useState('');
+  const [spec, setSpec] = useState('');
   const [quality, setQuality] = useState(0);
-  const [lifetime, setLifetime] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [detail, setDetail] = useState("");
+  const [lifetime, setLifetime] = useState('');
+  const [supplier, setSupplier] = useState('');
+  const [detail, setDetail] = useState('');
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -36,12 +37,12 @@ function Home() {
   const [cabin_order_list, setCabinOrderList] = useState([]);
   const [cabin_info, setCabin_info] = useState([]);
   const getCabinOrder = () => {
-    Axios.get("http://localhost:3003/create_order").then((response) => {
+    Axios.get('http://localhost:3003/create_order').then((response) => {
       setCabinOrderList(response.data);
     });
   };
   const getCabin_info = () => {
-    Axios.get("http://localhost:3003/cabin_info").then((response) => {
+    Axios.get('http://localhost:3003/cabin_info').then((response) => {
       setCabin_info(response.data);
     });
   };
@@ -124,7 +125,7 @@ function Home() {
           <Accordion defaultActiveKey="0">
             <Card>
               <Card.Header>
-                <Table responsive style={{ borderBottom: "2px" }}>
+                <Table responsive style={{ borderBottom: '2px' }}>
                   <thead>
                     <tr>
                       <th>เลขตู้</th>
@@ -136,7 +137,7 @@ function Home() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style={{ borderBottom: "2px" }}>
+                    <tr style={{ borderBottom: '2px' }}>
                       <td>
                         <Accordion.Toggle
                           as={Button}
@@ -161,9 +162,9 @@ function Home() {
               </Card.Header>
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
-                  <Table responsive style={{ borderBottom: "2px" }}>
+                  <Table responsive style={{ borderBottom: '2px' }}>
                     <thead>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <th>ประเภทห้อง</th>
                         <th>อุปกรณ์</th>
                         <th>ยี่ห้อ</th>
@@ -176,7 +177,7 @@ function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -186,10 +187,10 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button onClick={handleShow}>แก้ไข</Button>{" "}
+                          <Button onClick={handleShow}>แก้ไข</Button>{' '}
                         </th>
                       </tr>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -199,7 +200,7 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button onClick={handleShow}>แก้ไข</Button>{" "}
+                          <Button onClick={handleShow}>แก้ไข</Button>{' '}
                         </th>
                       </tr>
                     </tbody>
@@ -209,7 +210,7 @@ function Home() {
             </Card>
             <Card>
               <Card.Header>
-                <Table responsive style={{ borderBottom: "2px" }}>
+                <Table responsive style={{ borderBottom: '2px' }}>
                   <thead>
                     <tr>
                       <th>เลขตู้</th>
@@ -221,7 +222,7 @@ function Home() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style={{ borderBottom: "2px" }}>
+                    <tr style={{ borderBottom: '2px' }}>
                       <td>
                         <Accordion.Toggle
                           as={Button}
@@ -246,9 +247,9 @@ function Home() {
               </Card.Header>
               <Accordion.Collapse eventKey="2">
                 <Card.Body>
-                  <Table responsive style={{ borderBottom: "2px" }}>
+                  <Table responsive style={{ borderBottom: '2px' }}>
                     <thead>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <th>ประเภทห้อง</th>
                         <th>อุปกรณ์</th>
                         <th>ยี่ห้อ</th>
@@ -261,7 +262,7 @@ function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -271,10 +272,10 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button onClick={handleShow}>แก้ไข</Button>{" "}
+                          <Button onClick={handleShow}>แก้ไข</Button>{' '}
                         </th>
                       </tr>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -284,7 +285,7 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button onClick={handleShow}>แก้ไข</Button>{" "}
+                          <Button onClick={handleShow}>แก้ไข</Button>{' '}
                         </th>
                       </tr>
                     </tbody>
@@ -296,9 +297,9 @@ function Home() {
               return (
                 <Card>
                   <Card.Header>
-                    <Table responsive style={{ borderBottom: "2px" }}>
+                    <Table responsive style={{ borderBottom: '2px' }}>
                       <tbody>
-                        <tr style={{ borderBottom: "2px" }}>
+                        <tr style={{ borderBottom: '2px' }}>
                           <td>
                             <Accordion.Toggle
                               as={Button}
@@ -326,9 +327,9 @@ function Home() {
                     <Card.Body>
                       {cabin_info.map((val, key) => {
                         return (
-                          <Table responsive style={{ borderBottom: "2px" }}>
+                          <Table responsive style={{ borderBottom: '2px' }}>
                             <thead>
-                              <tr style={{ borderBottom: "2px" }}>
+                              <tr style={{ borderBottom: '2px' }}>
                                 <th>ประเภทห้อง</th>
                                 <th>อุปกรณ์</th>
                                 <th>ยี่ห้อ</th>
@@ -341,7 +342,7 @@ function Home() {
                               </tr>
                             </thead>
                             <tbody>
-                              <tr style={{ borderBottom: "2px" }}>
+                              <tr style={{ borderBottom: '2px' }}>
                                 <td>{val.cabin_type}</td>
                                 <td>{val.cabin_tool}</td>
                                 <td>{val.cabin_tool_name}</td>
@@ -352,7 +353,7 @@ function Home() {
                                 <td>{val.cabin_expired}</td>
 
                                 <th>
-                                  <Button onClick={handleShow}>แก้ไข</Button>{" "}
+                                  <Button onClick={handleShow}>แก้ไข</Button>{' '}
                                 </th>
                               </tr>
                             </tbody>
@@ -370,9 +371,9 @@ function Home() {
           <Accordion defaultActiveKey="0">
             <Card>
               <Card.Header>
-                <Table responsive style={{ borderBottom: "2px" }}>
+                <Table responsive style={{ borderBottom: '2px' }}>
                   <tbody>
-                    <tr style={{ borderBottom: "2px" }}>
+                    <tr style={{ borderBottom: '2px' }}>
                       <td>
                         <Accordion.Toggle
                           as={Button}
@@ -397,9 +398,9 @@ function Home() {
               </Card.Header>
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
-                  <Table responsive style={{ borderBottom: "2px" }}>
+                  <Table responsive style={{ borderBottom: '2px' }}>
                     <thead>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <th>ประเภทห้อง</th>
                         <th>อุปกรณ์</th>
                         <th>ยี่ห้อ</th>
@@ -412,7 +413,7 @@ function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -422,10 +423,10 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -435,7 +436,7 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
                     </tbody>
@@ -445,9 +446,9 @@ function Home() {
             </Card>
             <Card>
               <Card.Header>
-                <Table responsive style={{ borderBottom: "2px" }}>
+                <Table responsive style={{ borderBottom: '2px' }}>
                   <tbody>
-                    <tr style={{ borderBottom: "2px" }}>
+                    <tr style={{ borderBottom: '2px' }}>
                       <td>
                         <Accordion.Toggle
                           as={Button}
@@ -472,9 +473,9 @@ function Home() {
               </Card.Header>
               <Accordion.Collapse eventKey="2">
                 <Card.Body>
-                  <Table responsive style={{ borderBottom: "2px" }}>
+                  <Table responsive style={{ borderBottom: '2px' }}>
                     <thead>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <th>ประเภทห้อง</th>
                         <th>อุปกรณ์</th>
                         <th>ยี่ห้อ</th>
@@ -487,7 +488,7 @@ function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -497,10 +498,10 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -510,7 +511,7 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
                     </tbody>
@@ -524,7 +525,7 @@ function Home() {
           eventKey="alert"
           title={
             <div>
-              แจ้งซ่อม <Badge style={{ background: "red" }}>9</Badge>
+              แจ้งซ่อม <Badge style={{ background: 'red' }}>9</Badge>
               <span className="visually-hidden">unread messages</span>
             </div>
           }
@@ -532,9 +533,9 @@ function Home() {
           <Accordion defaultActiveKey="0">
             <Card>
               <Card.Header>
-                <Table responsive style={{ borderBottom: "2px" }}>
+                <Table responsive style={{ borderBottom: '2px' }}>
                   <tbody>
-                    <tr style={{ borderBottom: "2px" }}>
+                    <tr style={{ borderBottom: '2px' }}>
                       <td>
                         <Accordion.Toggle
                           as={Button}
@@ -559,9 +560,9 @@ function Home() {
               </Card.Header>
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
-                  <Table responsive style={{ borderBottom: "2px" }}>
+                  <Table responsive style={{ borderBottom: '2px' }}>
                     <thead>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <th>ประเภทห้อง</th>
                         <th>อุปกรณ์</th>
                         <th>ยี่ห้อ</th>
@@ -574,7 +575,7 @@ function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -584,10 +585,10 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -597,7 +598,7 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
                     </tbody>
@@ -607,9 +608,9 @@ function Home() {
             </Card>
             <Card>
               <Card.Header>
-                <Table responsive style={{ borderBottom: "2px" }}>
+                <Table responsive style={{ borderBottom: '2px' }}>
                   <tbody>
-                    <tr style={{ borderBottom: "2px" }}>
+                    <tr style={{ borderBottom: '2px' }}>
                       <td>
                         <Accordion.Toggle
                           as={Button}
@@ -634,9 +635,9 @@ function Home() {
               </Card.Header>
               <Accordion.Collapse eventKey="2">
                 <Card.Body>
-                  <Table responsive style={{ borderBottom: "2px" }}>
+                  <Table responsive style={{ borderBottom: '2px' }}>
                     <thead>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <th>ประเภทห้อง</th>
                         <th>อุปกรณ์</th>
                         <th>ยี่ห้อ</th>
@@ -649,7 +650,7 @@ function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -659,10 +660,10 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
-                      <tr style={{ borderBottom: "2px" }}>
+                      <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
                         <td>ABC</td>
@@ -672,7 +673,7 @@ function Home() {
                         <td>12/DEC/2021</td>
                         <th>ห้าง 1</th>
                         <th>
-                          <Button>แก้ไข</Button>{" "}
+                          <Button>แก้ไข</Button>{' '}
                         </th>
                       </tr>
                     </tbody>

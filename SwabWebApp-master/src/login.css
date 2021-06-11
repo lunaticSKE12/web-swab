@@ -1,0 +1,18 @@
+/* Login card */
+
+.card {
+  border-radius: 32px;
+}
+
+.card-content {
+  margin-top: 30%;
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.picture {
+  height: 100%;
+  width: 100%;
+
+  border-radius: 32px;
+}
