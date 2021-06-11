@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -7,23 +7,23 @@ import {
   Dropdown,
   Button,
   Modal,
-} from 'react-bootstrap';
-import styled from 'styled-components';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+} from "react-bootstrap";
+import styled from "styled-components";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 
 // ใช้ axios รับข้อมูลจาก api server
-import Axios from 'axios';
+import Axios from "axios";
 export default function Orderform() {
   // เก็บ state value ใน form
-  const [cabin_type, setCabin_type] = useState('');
-  const [region, setRegion] = useState('');
-  const [comname, setComname] = useState('');
-  const [brand, setBrand] = useState('');
-  const [spec, setSpec] = useState('');
+  const [cabin_type, setCabin_type] = useState("");
+  const [region, setRegion] = useState("");
+  const [comname, setComname] = useState("");
+  const [brand, setBrand] = useState("");
+  const [spec, setSpec] = useState("");
   const [quality, setQuality] = useState(0);
-  const [lifetime, setLifetime] = useState('');
-  const [supplier, setSupplier] = useState('');
+  const [lifetime, setLifetime] = useState("");
+  const [supplier, setSupplier] = useState("");
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -34,16 +34,16 @@ export default function Orderform() {
 
   // ดึงข้อมูลจาก api url มาเก็บ
   const getCabin_info = () => {
-    Axios.get('http://localhost:3003/cabin_info').then((response) => {
+    Axios.get("http://localhost:3003/cabin_info").then((response) => {
       setCabin_info(response.data);
     });
   };
 
-  const now = dayjs().format('YYYY-MM-DD H:mm:ss');
+  const now = dayjs().format("YYYY-MM-DD H:mm:ss");
 
   // ส่งข้อมูล
   const addComponent = () => {
-    Axios.post('http://localhost:3003/createComponent', {
+    Axios.post("http://localhost:3003/createComponent", {
       id: null,
       created_at: now,
       region: region,
@@ -74,7 +74,7 @@ export default function Orderform() {
   };
 
   return (
-    <Container style={{ width: '50%' }}>
+    <Container style={{ width: "50%" }}>
       <Form>
         <Row>
           <Col>
@@ -86,12 +86,8 @@ export default function Orderform() {
                 onChange={(event) => setCabin_type(event.target.value)}
               >
                 <option value="">เลือกประเภทห้อง</option>
-                <option value="ห้องความดันบวก Positive">
-                  ห้องความดันบวก Positive
-                </option>
-                <option value="ห้องความดันลบ Negative">
-                  ห้องความดันลบ Negative
-                </option>
+                <option value="P">ห้องความดันบวก Positive</option>
+                <option value="N">ห้องความดันลบ Negative</option>
               </select>
             </Form.Group>
           </Col>

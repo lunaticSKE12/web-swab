@@ -7,16 +7,16 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "swab_test",
-  port: "8889",
   // host: "localhost",
   // user: "root",
-  // password: "",
+  // password: "root",
   // database: "swab_test",
-  // port: "3306",
+  // port: "8889",
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "swab_test",
+  port: "3306",
 });
 
 app.get("/cabin_info", (req, res) => {
@@ -162,14 +162,19 @@ app.get("/cabin_order", (req, res) => {
   });
 });
 
-app.get("/selected_cabin_info", (req, res) => {
-  db.query("SELECT * FROM cabin_info WHERE id = ?", id, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
+app.get("/selected_cabin_info/:cabin_type", (req, res) => {
+  const cabin_type = req.params.cabin_type;
+  db.query(
+    "SELECT * FROM cabin_info WHERE cabin_type = ?",
+    cabin_type,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     }
-  });
+  );
 });
 
 app.delete("/delete_account/:id", (req, res) => {
