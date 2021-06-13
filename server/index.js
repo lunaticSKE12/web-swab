@@ -176,7 +176,20 @@ app.get("/selected_cabin_info/:cabin_type", (req, res) => {
     }
   );
 });
-
+app.get("/selected_Broken_cabin_info/:cabin_serial_number", (req, res) => {
+  const cabin_serial_number = req.params.cabin_serial_number;
+  db.query(
+    "SELECT * FROM create_order WHERE cabin_serial_number = ?",
+    cabin_serial_number,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
 app.delete("/delete_account/:id", (req, res) => {
   const id = req.params.id;
   db.query("DELETE FROM user_account WHERE id = ?", id, (err, result) => {
