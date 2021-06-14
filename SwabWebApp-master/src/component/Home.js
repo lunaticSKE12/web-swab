@@ -33,8 +33,9 @@ function Home() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  const [cabin_serial, setCabin_Serial] = useState('');
   const [cabin_order_list, setCabinOrderList] = useState([]);
+  const [cabin_broken_order_list, setBrokenCabinOrderList] = useState([]);
   const [cabin_info, setCabin_info] = useState([]);
   const [selectedId, setSelected] = useState('');
 
@@ -68,6 +69,17 @@ function Home() {
     );
   };
 
+  const getSelectedBrokenCabin_info = (cabin_serial_number) => {
+    Axios.get(
+      `http://localhost:3003/selected_Broken_cabin_info/${cabin_serial_number}`
+    ).then((response) => {
+      setBrokenCabinOrderList(
+        cabin_order_list.filter((val) => {
+          return val.cabin_serial_number != cabin_serial_number;
+        })
+      );
+    });
+  };
   // const getCabin_info = () => {
   //   Axios.get("http://localhost:3003/cabin_info").then((response) => {
   //     setCabin_info(response.data);
@@ -352,7 +364,32 @@ function Home() {
               <span className="visually-hidden">unread messages</span>
             </div>
           }
-        ></Tab>
+        >
+          <Table style={{ width: '100%' }}>
+            <Card>
+              <Card.Header>
+                <thead>
+                  <tr>
+                    <th>Serial number</th>
+                    <th>ชื่อโรงพยาบาล</th>
+                    <th>รายละเอียด</th>
+                  </tr>
+                </thead>
+                {cabin_broken_order_list.map((val, key) => {
+                  return (
+                    <tbody>
+                      <tr>
+                        <th>{val.cabin_serial_number}</th>
+                        <th>{val.hospital_name}</th>
+                        <th></th>
+                      </tr>
+                    </tbody>
+                  );
+                })}
+              </Card.Header>
+            </Card>
+          </Table>
+        </Tab>
       </Tabs>
 
       {/* modal แก้ไข */}
@@ -506,8 +543,8 @@ function Home() {
                   <Form.Control
                     type="text"
                     placeholder="serial number"
-                    // value={brand}
-                    // onChange={(e) => setBrand(e.target.value)}
+                    value={cabin_serial}
+                    onChange={(e) => setCabin_Serial(e.target.value)}
                   />
                 </Form.Group>
               </Col>
@@ -529,7 +566,14 @@ function Home() {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={() => setShowAlert(!showAlert)}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setShowAlert(!showAlert);
+              getSelectedBrokenCabin_info(cabin_serial);
+              console.log(cabin_serial);
+            }}
+          >
             Submit
           </Button>
         </Modal.Footer>
