@@ -32,12 +32,11 @@ export default function Orderform() {
   // เก็บข็อมูลจาก api
   const [cabin_info, setCabin_info] = useState([]);
 
-  // ดึงข้อมูลจาก api url มาเก็บ
-  const getCabin_info = () => {
+  useEffect(() => {
     Axios.get('http://localhost:3003/cabin_info').then((response) => {
       setCabin_info(response.data);
     });
-  };
+  });
 
   const now = dayjs().format('YYYY-MM-DD H:mm:ss');
 
@@ -86,12 +85,8 @@ export default function Orderform() {
                 onChange={(event) => setCabin_type(event.target.value)}
               >
                 <option value="">เลือกประเภทห้อง</option>
-                <option value="ห้องความดันบวก Positive">
-                  ห้องความดันบวก Positive
-                </option>
-                <option value="ห้องความดันลบ Negative">
-                  ห้องความดันลบ Negative
-                </option>
+                <option value="P">ห้องความดันบวก Positive</option>
+                <option value="N">ห้องความดันลบ Negative</option>
               </select>
             </Form.Group>
           </Col>
@@ -227,11 +222,11 @@ export default function Orderform() {
       {/* show data from api */}
 
       <div className="cabin list mt-3 mb-3">
-        <Button onClick={getCabin_info}>show all data</Button>
         {cabin_info.map((val, key) => {
           return (
             <div className="card mt-3" key={val.id}>
               <div className="card-body text-left">
+                <p className="card-text">id: {val.id}</p>
                 <p className="card-text">region: {val.region}</p>
                 <p className="card-text">cabin_type: {val.cabin_type}</p>
                 <p className="card-text">cabin_tool: {val.cabin_tool}</p>

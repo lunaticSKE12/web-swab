@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import Tabs from 'react-bootstrap/Tabs';
@@ -9,10 +9,10 @@ import Button from 'react-bootstrap/Button';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Axios from 'axios';
 import { useState } from 'react';
 import { Accordion, Col, Form, Modal, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Axios from 'axios';
 
 import {
   faFilter,
@@ -36,16 +36,43 @@ function Home() {
 
   const [cabin_order_list, setCabinOrderList] = useState([]);
   const [cabin_info, setCabin_info] = useState([]);
-  const getCabinOrder = () => {
+  const [selectedId, setSelected] = useState('');
+
+  useEffect(() => {
     Axios.get('http://localhost:3003/create_order').then((response) => {
       setCabinOrderList(response.data);
     });
+  });
+
+  // useEffect(() => {
+  //   Axios.get(`http://localhost:3003/selected_cabin_info/${cabin_type}`).then(
+  //     (response) => {
+  //       setCabin_info(
+  //         cabin_info.filter((val) => {
+  //           return val.cabin_type != cabin_type;
+  //         })
+  //       );
+  //     }
+  //   );
+  // });
+
+  const getSelectedCabin_info = (cabin_type) => {
+    Axios.get(`http://localhost:3003/selected_cabin_info/${cabin_type}`).then(
+      (response) => {
+        setCabin_info(
+          cabin_info.filter((val) => {
+            return val.cabin_type != cabin_type;
+          })
+        );
+      }
+    );
   };
-  const getCabin_info = () => {
-    Axios.get('http://localhost:3003/cabin_info').then((response) => {
-      setCabin_info(response.data);
-    });
-  };
+
+  // const getCabin_info = () => {
+  //   Axios.get("http://localhost:3003/cabin_info").then((response) => {
+  //     setCabin_info(response.data);
+  //   });
+  // };
 
   // show แจ้งซ่อม
   const [showAlert, setShowAlert] = useState(false);
@@ -102,19 +129,13 @@ function Home() {
           <Dropdown.Item href="#/action-1">CSC เชียงใหม่</Dropdown.Item>
         </DropdownButton>
 
-        <Button
-          onClick={() => {
-            getCabinOrder();
-            getCabin_info();
-          }}
-        >
-          show all data
-        </Button>
+        {/* <Button onClick={getCabinOrder}>show all data</Button> */}
         <Button variant="danger" onClick={() => setShowAlert(!showAlert)}>
           แจ้งซ่อม
         </Button>
       </ButtonGroup>
 
+      {/* tab all */}
       <Tabs
         id="controlled-tab-example"
         activeKey={key}
@@ -124,42 +145,6 @@ function Home() {
         <Tab eventKey="all" title="All">
           <Accordion defaultActiveKey="0">
             <Card>
-              <Card.Header>
-                <Table responsive style={{ borderBottom: '2px' }}>
-                  <thead>
-                    <tr>
-                      <th>เลขตู้</th>
-                      <th>Vendor Name</th>
-                      <th>ประเภทตู้</th>
-                      <th>Status วันที่</th>
-                      <th>ข้อมูลลูกค้า</th>
-                      <th>วันที่ ส่ง</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr style={{ borderBottom: '2px' }}>
-                      <td>
-                        <Accordion.Toggle
-                          as={Button}
-                          variant="link"
-                          eventKey="1"
-                        >
-                          <FontAwesomeIcon icon={faCaretDown} />
-                        </Accordion.Toggle>
-                        BKKP2105001
-                      </td>
-                      <td>Vendor 1</td>
-                      <td>P</td>
-                      <td>15/APR/2020</td>
-                      <td>
-                        โรงพยาบาล 1 ชื่อลูกค้า name เบอร์ 08123456789 <br />
-                        e-mail asdf@asdf.com
-                      </td>
-                      <td>15/APR/2020</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Header>
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
                   <Table responsive style={{ borderBottom: '2px' }}>
@@ -262,19 +247,6 @@ function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button onClick={handleShow}>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
                       <tr style={{ borderBottom: '2px' }}>
                         <td>ห้องความดันบวก</td>
                         <td>หลอดไฟLED</td>
@@ -305,6 +277,10 @@ function Home() {
                               as={Button}
                               variant="link"
                               eventKey="3"
+                              onClick={() => {
+                                console.log(val.cabin_type);
+                                getSelectedCabin_info(val.cabin_type);
+                              }}
                             >
                               <FontAwesomeIcon icon={faCaretDown} />
                             </Accordion.Toggle>
@@ -325,22 +301,22 @@ function Home() {
                   </Card.Header>
                   <Accordion.Collapse eventKey="3">
                     <Card.Body>
-                      {cabin_info.map((val, key) => {
-                        return (
-                          <Table responsive style={{ borderBottom: '2px' }}>
-                            <thead>
-                              <tr style={{ borderBottom: '2px' }}>
-                                <th>ประเภทห้อง</th>
-                                <th>อุปกรณ์</th>
-                                <th>ยี่ห้อ</th>
-                                <th>spec</th>
-                                <th>จำนวน</th>
-                                <th>วันที่เปลี่ยนล่าสุด</th>
-                                <th>แหล่งที่ซื้อ</th>
-                                <th>กำหนดเปลี่ยนครั้งถัดไป</th>
-                                <th> </th>
-                              </tr>
-                            </thead>
+                      <Table responsive style={{ borderBottom: '2px' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '2px' }}>
+                            <th>ประเภทห้อง</th>
+                            <th>อุปกรณ์</th>
+                            <th>ยี่ห้อ</th>
+                            <th>spec</th>
+                            <th>จำนวน</th>
+                            <th>วันที่เปลี่ยนล่าสุด</th>
+                            <th>แหล่งที่ซื้อ</th>
+                            <th>กำหนดเปลี่ยนครั้งถัดไป</th>
+                            <th> </th>
+                          </tr>
+                        </thead>
+                        {cabin_info.map((val, key) => {
+                          return (
                             <tbody>
                               <tr style={{ borderBottom: '2px' }}>
                                 <td>{val.cabin_type}</td>
@@ -357,9 +333,9 @@ function Home() {
                                 </th>
                               </tr>
                             </tbody>
-                          </Table>
-                        );
-                      })}
+                          );
+                        })}
+                      </Table>
                     </Card.Body>
                   </Accordion.Collapse>
                 </Card>
@@ -367,160 +343,7 @@ function Home() {
             })}
           </Accordion>
         </Tab>
-        <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่">
-          <Accordion defaultActiveKey="0">
-            <Card>
-              <Card.Header>
-                <Table responsive style={{ borderBottom: '2px' }}>
-                  <tbody>
-                    <tr style={{ borderBottom: '2px' }}>
-                      <td>
-                        <Accordion.Toggle
-                          as={Button}
-                          variant="link"
-                          eventKey="1"
-                        >
-                          <FontAwesomeIcon icon={faCaretDown} />
-                        </Accordion.Toggle>
-                        BKKP2105001
-                      </td>
-                      <td>Vendor 1</td>
-                      <td>P</td>
-                      <td>15/APR/2020</td>
-                      <td>
-                        โรงพยาบาล 1 ชื่อลูกค้า name เบอร์ 08123456789 <br />
-                        e-mail asdf@asdf.com
-                      </td>
-                      <td>15/APR/2020</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Header>
-              <Accordion.Collapse eventKey="1">
-                <Card.Body>
-                  <Table responsive style={{ borderBottom: '2px' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <th>ประเภทห้อง</th>
-                        <th>อุปกรณ์</th>
-                        <th>ยี่ห้อ</th>
-                        <th>spec</th>
-                        <th>จำนวน</th>
-                        <th>วันที่เปลี่ยนล่าสุด</th>
-                        <th>แหล่งที่ซื้อ</th>
-                        <th>กำหนดเปลี่ยนครั้งถัดไป</th>
-                        <th> </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-            <Card>
-              <Card.Header>
-                <Table responsive style={{ borderBottom: '2px' }}>
-                  <tbody>
-                    <tr style={{ borderBottom: '2px' }}>
-                      <td>
-                        <Accordion.Toggle
-                          as={Button}
-                          variant="link"
-                          eventKey="2"
-                        >
-                          <FontAwesomeIcon icon={faCaretDown} />
-                        </Accordion.Toggle>
-                        BKKP2105001
-                      </td>
-                      <td>Vendor 1</td>
-                      <td>P</td>
-                      <td>15/APR/2020</td>
-                      <td>
-                        โรงพยาบาล 1 ชื่อลูกค้า name เบอร์ 08123456789 <br />
-                        e-mail asdf@asdf.com
-                      </td>
-                      <td>15/APR/2020</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Header>
-              <Accordion.Collapse eventKey="2">
-                <Card.Body>
-                  <Table responsive style={{ borderBottom: '2px' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <th>ประเภทห้อง</th>
-                        <th>อุปกรณ์</th>
-                        <th>ยี่ห้อ</th>
-                        <th>spec</th>
-                        <th>จำนวน</th>
-                        <th>วันที่เปลี่ยนล่าสุด</th>
-                        <th>แหล่งที่ซื้อ</th>
-                        <th>กำหนดเปลี่ยนครั้งถัดไป</th>
-                        <th> </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Accordion>
-        </Tab>
+        <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่"></Tab>
         <Tab
           eventKey="alert"
           title={
@@ -529,162 +352,10 @@ function Home() {
               <span className="visually-hidden">unread messages</span>
             </div>
           }
-        >
-          <Accordion defaultActiveKey="0">
-            <Card>
-              <Card.Header>
-                <Table responsive style={{ borderBottom: '2px' }}>
-                  <tbody>
-                    <tr style={{ borderBottom: '2px' }}>
-                      <td>
-                        <Accordion.Toggle
-                          as={Button}
-                          variant="link"
-                          eventKey="1"
-                        >
-                          <FontAwesomeIcon icon={faCaretDown} />
-                        </Accordion.Toggle>
-                        BKKP2105001
-                      </td>
-                      <td>Vendor 1</td>
-                      <td>P</td>
-                      <td>15/APR/2020</td>
-                      <td>
-                        โรงพยาบาล 1 ชื่อลูกค้า name เบอร์ 08123456789 <br />
-                        e-mail asdf@asdf.com
-                      </td>
-                      <td>15/APR/2020</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Header>
-              <Accordion.Collapse eventKey="1">
-                <Card.Body>
-                  <Table responsive style={{ borderBottom: '2px' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <th>ประเภทห้อง</th>
-                        <th>อุปกรณ์</th>
-                        <th>ยี่ห้อ</th>
-                        <th>spec</th>
-                        <th>จำนวน</th>
-                        <th>วันที่เปลี่ยนล่าสุด</th>
-                        <th>แหล่งที่ซื้อ</th>
-                        <th>กำหนดเปลี่ยนครั้งถัดไป</th>
-                        <th> </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-            <Card>
-              <Card.Header>
-                <Table responsive style={{ borderBottom: '2px' }}>
-                  <tbody>
-                    <tr style={{ borderBottom: '2px' }}>
-                      <td>
-                        <Accordion.Toggle
-                          as={Button}
-                          variant="link"
-                          eventKey="2"
-                        >
-                          <FontAwesomeIcon icon={faCaretDown} />
-                        </Accordion.Toggle>
-                        BKKP2105001
-                      </td>
-                      <td>Vendor 1</td>
-                      <td>P</td>
-                      <td>15/APR/2020</td>
-                      <td>
-                        โรงพยาบาล 1 ชื่อลูกค้า name เบอร์ 08123456789 <br />
-                        e-mail asdf@asdf.com
-                      </td>
-                      <td>15/APR/2020</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Header>
-              <Accordion.Collapse eventKey="2">
-                <Card.Body>
-                  <Table responsive style={{ borderBottom: '2px' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <th>ประเภทห้อง</th>
-                        <th>อุปกรณ์</th>
-                        <th>ยี่ห้อ</th>
-                        <th>spec</th>
-                        <th>จำนวน</th>
-                        <th>วันที่เปลี่ยนล่าสุด</th>
-                        <th>แหล่งที่ซื้อ</th>
-                        <th>กำหนดเปลี่ยนครั้งถัดไป</th>
-                        <th> </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                      <tr style={{ borderBottom: '2px' }}>
-                        <td>ห้องความดันบวก</td>
-                        <td>หลอดไฟLED</td>
-                        <td>ABC</td>
-                        <td>24W</td>
-                        <td>จำนวน 4 </td>
-                        <td>12/APR/2020</td>
-                        <td>12/DEC/2021</td>
-                        <th>ห้าง 1</th>
-                        <th>
-                          <Button>แก้ไข</Button>{' '}
-                        </th>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Accordion>
-        </Tab>
+        ></Tab>
       </Tabs>
 
+      {/* modal แก้ไข */}
       <Modal
         show={show}
         onHide={handleClose}
@@ -804,6 +475,7 @@ function Home() {
         </Modal.Footer>
       </Modal>
 
+      {/* modal แจ้งซ่อม */}
       <Modal
         show={showAlert}
         onHide={() => setShowAlert(!showAlert)}
