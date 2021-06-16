@@ -11,7 +11,6 @@ export default function Accountform() {
   const [phone_number, setPhoneNum] = useState('');
   const [email, setEmail] = useState('');
   const [emailSup, setEmailSup] = useState('');
-  const [csc, setCsc] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(0);
@@ -31,7 +30,6 @@ export default function Accountform() {
       email: email,
       supervisor_email: emailSup,
       region: region,
-      csc: csc,
       username: username,
       password: password,
       create_at: now,
@@ -47,7 +45,6 @@ export default function Accountform() {
           email: email,
           supervisor_email: emailSup,
           region: region,
-          csc: csc,
           username: username,
           password: password,
           create_at: now,
@@ -106,10 +103,10 @@ export default function Accountform() {
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>E-mail</Form.Label>
+              <Form.Label>E-mail Supervisor</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="กรุณากรอก E-mail"
+                placeholder="กรุณากรอก E-mail supervisor"
                 onChange={(e) => setEmailSup(e.target.value)}
               />
             </Form.Group>
@@ -126,45 +123,13 @@ export default function Accountform() {
                 onChange={(e) => setRegion(e.target.value)}
               >
                 <option value="">เลือกภาค</option>
+                <option value="A">Call center</option>
                 <option value="C">Central</option>
                 <option value="N">North</option>
                 <option value="S">South</option>
                 <option value="E">Central East</option>
                 <option value="W">Central West</option>
                 <option value="NE">Northeast</option>
-              </select>
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>CSC</Form.Label>
-              <select
-                className="form-control"
-                id="region"
-                onChange={(e) => setCsc(e.target.value)}
-              >
-                <option value="">CSC</option>
-                <option value="RMC Production and Service Metro 1">
-                  RMC Production and Service Metro 1
-                </option>
-                <option value="RMC Production and Service Metro 2">
-                  RMC Production and Service Metro 2
-                </option>
-                <option value="RMC Production and Service Metro 3">
-                  RMC Production and Service Metro 3
-                </option>
-                <option value="RMC Production and Service Metro 4">
-                  RMC Production and Service Metro 4
-                </option>
-                <option value="CPAC Solution Center กรุงเทพฯ และปริมณฑล">
-                  CPAC Solution Center กรุงเทพฯ และปริมณฑล
-                </option>
-                <option value="CPAC Solution Center กระบี่">
-                  CPAC Solution Center กระบี่
-                </option>
-                <option value="CPAC Solution Center สุราษฎร์ธานี">
-                  CPAC Solution Center สุราษฎร์ธานี
-                </option>
               </select>
             </Form.Group>
           </Col>
@@ -195,11 +160,16 @@ export default function Accountform() {
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>role</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="role"
+              <select
+                className="form-control"
+                id="role"
                 onChange={(e) => setRole(e.target.value)}
-              />
+              >
+                <option value="">เลือก role</option>
+                <option value="Admin">Admin</option>
+                <option value="Chain">Chain</option>
+                <option value="Call center">Call center</option>
+              </select>
             </Form.Group>
           </Col>
         </Row>

@@ -20,6 +20,8 @@ export default function Orderform() {
   const [cabin_order_list, setCabinOrderList] = useState([]);
   const now = dayjs().format('YYYY-MM-DD H:mm:ss');
   const [show, setShow] = useState(false);
+  const [region, setRegion] = useState('');
+  const [csc, setCsc] = useState('');
   const [province, setProvince] = useState('');
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -39,6 +41,8 @@ export default function Orderform() {
       created_at: now,
       hospital_name: hosName,
       province: province,
+      region: region,
+      csc: csc,
       customer_name: cusName,
       customer_phone: phoneNum,
       customer_email: email,
@@ -59,6 +63,8 @@ export default function Orderform() {
           created_at: now,
           hospital_name: hosName,
           province: province,
+          region: region,
+          csc: csc,
           customer_name: cusName,
           customer_phone: phoneNum,
           customer_email: email,
@@ -161,10 +167,124 @@ export default function Orderform() {
         <br></br>
         <Row>
           <Col>
+            <Form.Group className="mb-3" controlId="region">
+              <Form.Label>ภาค</Form.Label>
+              <select
+                className="form-control"
+                id="region"
+                onChange={(e) => setRegion(e.target.value)}
+              >
+                <option value="">เลือกภาค</option>
+                <option value="C">Central</option>
+                <option value="N">North</option>
+                <option value="S">South</option>
+                <option value="E">Central East</option>
+                <option value="W">Central West</option>
+                <option value="NE">Northeast</option>
+              </select>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>CSC</Form.Label>
+              <select
+                className="form-control"
+                id="region"
+                onChange={(e) => setCsc(e.target.value)}
+              >
+                <option value="">เลือก CSC</option>
+                <option value="RMC Production and Service Metro 1">
+                  RMC Production and Service Metro 1
+                </option>
+                <option value="RMC Production and Service Metro 2">
+                  RMC Production and Service Metro 2
+                </option>
+                <option value="RMC Production and Service Metro 3">
+                  RMC Production and Service Metro 3
+                </option>
+                <option value="RMC Production and Service Metro 4">
+                  RMC Production and Service Metro 4
+                </option>
+                <option value="CPAC Solution Center กรุงเทพฯ และปริมณฑล">
+                  CPAC Solution Center กรุงเทพฯ และปริมณฑล
+                </option>
+                <option value="CPAC Solution Center กระบี่">
+                  CPAC Solution Center กระบี่
+                </option>
+                <option value="CPAC Solution Center สุราษฎร์ธานี">
+                  CPAC Solution Center สุราษฎร์ธานี
+                </option>
+                <option value="CPAC Solution Center ภูเก็ต">
+                  CPAC Solution Center ภูเก็ต
+                </option>
+                <option value="CPAC Solution Center นครศรีธรรมราช">
+                  CPAC Solution Center นครศรีธรรมราช
+                </option>
+                <option value="CPAC Solution Center สงขลา">
+                  CPAC Solution Center สงขลา
+                </option>
+                <option value="CPAC Solution Center ฉะเชิงเทรา">
+                  CPAC Solution Center ฉะเชิงเทรา
+                </option>
+                <option value="CPAC Solution Center ชลบุรี">
+                  CPAC Solution Center ชลบุรี
+                </option>
+                <option value="CPAC Solution Center ระยอง">
+                  CPAC Solution Center ระยอง
+                </option>
+                <option value="CPAC Solution Center สระบุรี">
+                  CPAC Solution Center สระบุรี
+                </option>
+                <option value="CPAC Solution Center อยุธยา">
+                  CPAC Solution Center อยุธยา
+                </option>
+                <option value="CPAC Solution Center นครปฐม">
+                  CPAC Solution Center นครปฐม
+                </option>
+                <option value="CPAC Solution Center สมุทรสาคร">
+                  CPAC Solution Center สมุทรสาคร
+                </option>
+                <option value="CPAC Solution Center ลำปาง">
+                  CPAC Solution Center ลำปาง
+                </option>
+                <option value="CPAC Solution Center เชียงใหม่">
+                  CPAC Solution Center เชียงใหม่
+                </option>
+                <option value="CPAC Solution Center เชียงราย">
+                  CPAC Solution Center เชียงราย
+                </option>
+                <option value="CPAC Solution Center พิษณุโลก">
+                  CPAC Solution Center พิษณุโลก
+                </option>
+                <option value="CPAC Solution Center นครสวรรค์">
+                  CPAC Solution Center นครสวรรค์
+                </option>
+                <option value="CPAC Solution Center นครราชสีมา">
+                  CPAC Solution Center นครราชสีมา
+                </option>
+                <option value="CPAC Solution Center สกลนคร">
+                  CPAC Solution Center สกลนคร
+                </option>
+                <option value="CPAC Solution Center อุดรธานี">
+                  CPAC Solution Center อุดรธานี
+                </option>
+                <option value="CPAC Solution Center อุบลราชธานี">
+                  CPAC Solution Center อุบลราชธานี
+                </option>
+                <option value="CPAC Solution Center ขอนแก่น">
+                  CPAC Solution Center ขอนแก่น
+                </option>
+              </select>
+            </Form.Group>
+          </Col>
+        </Row>
+        <br></br>
+        <Row>
+          <Col>
             <Form.Label>วันเวลาที่ต้องส่งมอบ</Form.Label>
             <input
               type="date"
-              class="form-control"
+              className="form-control"
               value={sendDate}
               onChange={(e) => setSendDate(e.target.value)}
             ></input>
@@ -259,6 +379,7 @@ export default function Orderform() {
             </Form.Group>
           </Col>
         </Row>
+
         <br></br>
         <Row>
           <Col>
@@ -312,7 +433,7 @@ export default function Orderform() {
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>ผู้ผลิค</Form.Label>
+              <Form.Label>ผู้ผลิต</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="ผู้ผลิต"
@@ -326,7 +447,7 @@ export default function Orderform() {
               <Form.Label>เลขตู้</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="ผู้ผลิต"
+                placeholder="เลขตู้"
                 value={serial}
                 onChange={(e) => setSerial(e.target.value)}
               />
@@ -337,7 +458,6 @@ export default function Orderform() {
       <Button
         onClick={() => {
           handleShow();
-          addCabinOrder();
         }}
       >
         Submit
@@ -363,9 +483,28 @@ export default function Orderform() {
           <p>ลำดับการส่ง : {rangeSend}</p>
           <p>Group : {group}</p>
           <p>จำนวน : {quality}</p>
-          <p>บริจาคหรือไม่ : {isChecked + ''}</p>
+          <p>บริจาคหรือไม่ : {isChecked ? 'ใช่' : 'ไม่'}</p>
           <p>ผู้ผลิค : {supplier}</p>
         </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              handleClose();
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            variant="success"
+            onClick={() => {
+              handleClose();
+              addCabinOrder();
+            }}
+          >
+            Save
+          </Button>
+        </Modal.Footer>
       </Modal>
     </Container>
   );

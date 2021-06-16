@@ -338,21 +338,21 @@ export default function Orderform() {
           return (
             <div className="card mt-3" key={val.id}>
               <div className="card-body text-left">
-                <p className="card-text">id: {val.id}</p>
-                <p className="card-text">region: {val.region}</p>
-                <p className="card-text">cabin_type: {val.cabin_type}</p>
-                <p className="card-text">cabin_tool: {val.cabin_tool}</p>
                 <p className="card-text">
-                  cabin_tool_name: {val.cabin_tool_name}
+                  ภาค: {val.region} ประเภทห้อง: {val.cabin_type}
                 </p>
-                <p className="card-text">cabin_spec: {val.cabin_spec}</p>
+                <p className="card-text">ประเภทห้อง: {val.cabin_type}</p>
                 <p className="card-text">
-                  cabin_toot_amount: {val.cabin_toot_amount}
+                  อุปกรณ์: {val.cabin_tool} ยี่ห้อ: {val.cabin_tool_name}
                 </p>
-                <p className="card-text">cabin_expired: {val.cabin_expired}</p>
                 <p className="card-text">
-                  cabin_toot_buy_from: {val.cabin_toot_buy_from}
+                  spec: {val.cabin_spec} จำนวน: {val.cabin_toot_amount}
                 </p>
+                <p className="card-text">
+                  จำนวน: {val.cabin_toot_amount} วันหมด (เดือน):{' '}
+                  {val.cabin_expired}
+                </p>
+                <p className="card-text">ซื้อจาก: {val.cabin_toot_buy_from}</p>
               </div>
             </div>
           );

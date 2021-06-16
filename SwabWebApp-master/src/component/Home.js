@@ -20,6 +20,18 @@ import {
   faUserAlt,
   faCaretDown,
 } from '@fortawesome/free-solid-svg-icons';
+
+// Send mail
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+  host: 'gmail',
+  service: 'Gmail',
+  auth: {
+    user: 'alert.cabin.swab@gmail.com',
+    pass: 'AlertCabin',
+  },
+});
+
 function Home() {
   const [key, setKey] = useState('all');
   const [sendDate, setSendDate] = useState('');
@@ -29,19 +41,41 @@ function Home() {
   const [quality, setQuality] = useState(0);
   const [lifetime, setLifetime] = useState('');
   const [supplier, setSupplier] = useState('');
-  const [detail, setDetail] = useState('');
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [cabin_serial, setCabin_Serial] = useState('');
   const [cabin_order_list, setCabinOrderList] = useState([]);
   const [cabin_broken_order_list, setBrokenCabinOrderList] = useState([]);
   const [cabin_info, setCabin_info] = useState([]);
   const [selectedId, setSelected] = useState('');
 
+  // รายละเอียดแจ้งซ่อม
+  const [alert, setAlert] = useState([]);
+  const [hospitalName, setHospitalName] = useState('');
+  const [cabin_serial, setCabin_Serial] = useState('');
+  const [region, setRegion] = useState('');
+  const [detail, setDetail] = useState('');
+
   // show แจ้งซ่อม
   const [showAlert, setShowAlert] = useState(false);
   const [showInfo, setShowInfo] = useState(false); // Modal show tools
+
+  // get user
+  const user = window.localStorage.getItem('user');
+  console.log(user);
+
+  const alert_cabin = () => {
+    setAlert([
+      ...alert,
+      {
+        hospitalName: hospitalName,
+        cabin_serial: cabin_serial,
+        // เลือกภาคให้แจ้งmail
+        region: region,
+        detail: detail,
+      },
+    ]);
+  };
 
   // all cabin order
   useEffect(() => {
@@ -502,7 +536,7 @@ function Home() {
                 </Form.Group>
               </Col>
             </Row>
-            <Row>
+            {/* <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>รายละเอียดเฉพาะกรณีมีการแจ้งซ่อม</Form.Label>
@@ -514,11 +548,16 @@ function Home() {
                   />
                 </Form.Group>
               </Col>
-            </Row>
+            </Row> */}
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleClose}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleClose();
+            }}
+          >
             Submit
           </Button>
         </Modal.Footer>
@@ -543,8 +582,8 @@ function Home() {
                   <Form.Control
                     type="text"
                     placeholder="ชื่อโรงพยาบาล"
-                    // value={comname}
-                    // onChange={(e) => setComname(e.target.value)}
+                    value={hospitalName}
+                    onChange={(e) => setHospitalName(e.target.value)}
                   />
                 </Form.Group>
               </Col>
@@ -563,6 +602,26 @@ function Home() {
             </Row>
             <Row>
               <Col>
+                <Form.Group className="mb-3" controlId="region">
+                  <Form.Label>ภาค</Form.Label>
+                  <select
+                    className="form-control"
+                    id="region"
+                    onChange={(e) => setRegion(e.target.value)}
+                  >
+                    <option value="">เลือกภาค</option>
+                    <option value="C">Central</option>
+                    <option value="N">North</option>
+                    <option value="S">South</option>
+                    <option value="E">Central East</option>
+                    <option value="W">Central West</option>
+                    <option value="NE">Northeast</option>
+                  </select>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
                 <Form.Group className="mb-3" controlId="ControlTextarea1">
                   <Form.Label>รายละเอียด</Form.Label>
                   <Form.Control
@@ -570,7 +629,7 @@ function Home() {
                     rows={3}
                     type="text"
                     placeholder="รายละเอียด"
-                    // onChange={(e) => setDetail(e.target.value)}
+                    onChange={(e) => setDetail(e.target.value)}
                   />
                 </Form.Group>
               </Col>
