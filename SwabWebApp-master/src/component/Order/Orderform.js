@@ -29,6 +29,9 @@ export default function Orderform() {
     setIsChecked(!isChecked);
   };
 
+  // show province only web
+  const [textProvince, setTextProvince] = useState('');
+
   // const getCabinOrder = () => {
   //   Axios.get('http://localhost:3003/cabin_order').then((response) => {
   //     setCabinOrderList(response.data);
@@ -295,7 +298,14 @@ export default function Orderform() {
               <select
                 className="form-control"
                 id="region"
-                onChange={(e) => setProvince(e.target.value)}
+                onChange={(e) => {
+                  setProvince(e.target.value);
+                  // myNewFunction(e.options[e.selectedIndex].text);
+                  const select = e.target;
+                  const textProvince = select.selectedOptions[0].text;
+                  setTextProvince(textProvince);
+                  console.log(textProvince);
+                }}
               >
                 <option value="">เลือกจังหวัด</option>
                 <option value="KBI">กระบี่ </option>
@@ -479,7 +489,9 @@ export default function Orderform() {
           <p>ประเภทห้อง : {roomType}</p>
           <p>ด่วน : {need}</p>
           <p>วันที่ต้องส่งมอบ : {sendDate}</p>
-          <p>จังหวัด : {province}</p>
+          <p>
+            จังหวัด : {textProvince} {province}
+          </p>
           <p>ลำดับการส่ง : {rangeSend}</p>
           <p>Group : {group}</p>
           <p>จำนวน : {quality}</p>

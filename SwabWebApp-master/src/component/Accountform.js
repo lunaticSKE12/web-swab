@@ -123,7 +123,6 @@ export default function Accountform() {
                 onChange={(e) => setRegion(e.target.value)}
               >
                 <option value="">เลือกภาค</option>
-                <option value="A">Call center</option>
                 <option value="C">Central</option>
                 <option value="N">North</option>
                 <option value="S">South</option>
