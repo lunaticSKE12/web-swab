@@ -45,6 +45,12 @@ export default function Account() {
     });
   }, []);
 
+  const getAccount = () => {
+    Axios.get('http://localhost:3003/user_account').then((response) => {
+      setAccountList(response.data);
+    });
+  };
+
   return (
     <Container>
       <Form>
@@ -64,6 +70,9 @@ export default function Account() {
               <FontAwesomeIcon icon={faUserAlt} /> เพิ่ม Account
             </Button>
           </Link>
+          <Button style={{ marginLeft: '.5rem' }} onClick={getAccount}>
+            Refresh
+          </Button>
         </Row>
       </Form>
       <br />
@@ -76,7 +85,6 @@ export default function Account() {
               <th>เบอโทรติดต่อ</th>
               <th>E-mail supervisor</th>
               <th>ภาค</th>
-              <th>csc</th>
               <th>role</th>
               <th></th>
             </tr>
@@ -106,7 +114,6 @@ export default function Account() {
                   <td>{val.phone_number}</td>
                   <td>{val.supervisor_email}</td>
                   <td>{val.region}</td>
-                  <td>{val.csc}</td>
                   <td>{val.role}</td>
                   <td>
                     {' '}

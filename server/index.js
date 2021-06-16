@@ -196,34 +196,175 @@ app.post('/create_cabin_order', (req, res) => {
   const donate = req.body.donate;
   const vendor_name = req.body.vendor_name;
   const cabin_serial_number = req.body.cabin_serial_number;
+  const year = req.body.year;
+  const month = req.body.month;
 
+  const code = province + cabin_type + year + month;
+  console.log(code);
   db.query(
-    'INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-    [
-      id,
-      created_at,
-      hospital_name,
-      province,
-      region,
-      csc,
-      customer_name,
-      customer_phone,
-      customer_email,
-      cabin_type,
-      express,
-      deliver_date,
-      sequence,
-      vendor_group,
-      amount,
-      donate,
-      vendor_name,
-      cabin_serial_number,
-    ],
+    "select CONCAT(?, right(CONCAT('000000000' , convert(convert(substring(max(cabin_serial_number), 9, 3), SIGNED) + 1,CHAR)),3)) AS Code from create_order where `cabin_serial_number` like ? LIMIT 1;",
+    [code, code + '%'],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        res.send('Inserted');
+        console.log(' ==0', result);
+        console.log(result.length);
+        if (result[0]['Code'] === 'null') {
+          console.log(' == null', result);
+          const gencode = code + '001';
+          db.query(
+            'INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [
+              id,
+              created_at,
+              hospital_name,
+              province,
+              region,
+              csc,
+              customer_name,
+              customer_phone,
+              customer_email,
+              cabin_type,
+              express,
+              deliver_date,
+              sequence,
+              vendor_group,
+              amount,
+              donate,
+              vendor_name,
+              gencode,
+            ],
+            (err, result) => {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log('xxxxxxxxxx');
+                db.query(
+                  'SELECT id FROM create_order WHERE cabin_serial_number = ?',
+                  [gencode],
+                  (err, result_order) => {
+                    console.log('xxxxxxxxxx', result_order);
+
+                    db.query(
+                      'SELECT * FROM cabin_info WHERE region = ? AND cabin_type = ?',
+                      [region, cabin_type],
+                      (err, result_cabin) => {
+                        console.log('aaaa', result_cabin);
+                        db.query(
+                          'SELECT * FROM item_in_cabin WHERE cabin_info_id = ?',
+                          [result_cabin[0]['id']],
+                          (err, result_item) => {
+                            console.log('cccc', result_item);
+                            for (i = 0; i < result_item.length; i++) {
+                              db.query(
+                                'INSERT INTO item_in_order (cabin_tool, cabin_tool_name, cabin_spec, cabin_tool_amount, cabin_expired, cabin_tool_buy_from,order_id) VALUES(?,?,?,?,?,?,?)',
+                                [
+                                  result_item[i]['cabin_tool'],
+                                  result_item[i]['cabin_tool_name'],
+                                  result_item[i]['cabin_spec'],
+                                  result_item[i]['cabin_tool_amount'],
+                                  result_item[i]['cabin_expired'],
+                                  result_item[i]['cabin_tool_buy_from'],
+                                  result_order[0]['id'],
+                                ],
+                                (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    console.log('Insertedxxx');
+                                  }
+                                }
+                              );
+                            }
+                          }
+                        );
+                      }
+                    );
+                  }
+                );
+              }
+            }
+          );
+        } else {
+          // console.log('code gen',result[0]["CONCAT('BKKP2106', right(CONCAT('000000000' , convert(convert(substring(max(cabin_serial_number), 9, 3), SIGNED) + 1,CHAR)),3))"])
+
+          const gennerate = result[0]['Code'];
+          console.log('!=== null', gennerate);
+          db.query(
+            'INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [
+              id,
+              created_at,
+              hospital_name,
+              province,
+              region,
+              csc,
+              customer_name,
+              customer_phone,
+              customer_email,
+              cabin_type,
+              express,
+              deliver_date,
+              sequence,
+              vendor_group,
+              amount,
+              donate,
+              vendor_name,
+              gennerate,
+            ],
+            (err, result) => {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log('xxxxxxxxxx');
+                db.query(
+                  'SELECT id FROM create_order WHERE cabin_serial_number = ?',
+                  [gennerate],
+                  (err, result_order) => {
+                    console.log('xxxxxxxxxx', result_order);
+
+                    db.query(
+                      'SELECT * FROM cabin_info WHERE region = ? AND cabin_type = ?',
+                      [region, cabin_type],
+                      (err, result_cabin) => {
+                        console.log('aaaa', result_cabin);
+                        db.query(
+                          'SELECT * FROM item_in_cabin WHERE cabin_info_id = ?',
+                          [result_cabin[0]['id']],
+                          (err, result_item) => {
+                            console.log('cccc', result_item);
+                            for (i = 0; i < result_item.length; i++) {
+                              db.query(
+                                'INSERT INTO item_in_order (cabin_tool, cabin_tool_name, cabin_spec, cabin_tool_amount, cabin_expired, cabin_tool_buy_from,order_id) VALUES(?,?,?,?,?,?,?)',
+                                [
+                                  result_item[i]['cabin_tool'],
+                                  result_item[i]['cabin_tool_name'],
+                                  result_item[i]['cabin_spec'],
+                                  result_item[i]['cabin_tool_amount'],
+                                  result_item[i]['cabin_expired'],
+                                  result_item[i]['cabin_tool_buy_from'],
+                                  result_order[0]['id'],
+                                ],
+                                (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    console.log('Insertedxxx');
+                                  }
+                                }
+                              );
+                            }
+                          }
+                        );
+                      }
+                    );
+                  }
+                );
+              }
+            }
+          );
+        }
       }
     }
   );
@@ -299,6 +440,19 @@ app.get('/user_account', (req, res) => {
       res.send(result);
     }
   });
+});
+
+app.get('/login', (req, res) => {
+  db.query(
+    'SELECT username, password,region, role FROM user_account',
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
 });
 
 app.listen('3003', () => {

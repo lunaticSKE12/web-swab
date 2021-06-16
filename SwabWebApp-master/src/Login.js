@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
 import './login.css';
 import Image from 'react-bootstrap/Image';
 import Axios from 'axios';
@@ -6,21 +7,51 @@ import { useState } from 'react';
 import login from './picture/login.png';
 
 function Login(env) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
   const [userList, setUserList] = useState([]);
 
-  const getUsers = () => {
-    Axios.get('http://localhost:3003/user_account').then((response) => {
+  const tempUsername = '';
+  const tempPassword = '';
+  const tempRole = '';
+
+  useEffect(() => {
+    Axios.get('http://localhost:3003/login').then((response) => {
       setUserList(response.data);
     });
-    debugger;
+  }, []);
+
+  // login and save user
+  const getUsers = () => {
+    Axios.get('http://localhost:3003/login')
+      .then((response) => {
+        setUserList(response.data);
+      })
+      .then(() => {
+        userList.map((val, key) => {
+          if (username === val.username && password === val.password) {
+            console.log('yes');
+            const person = {
+              username: username,
+              region: val.region,
+              role: val.role,
+            };
+            const temp = window.localStorage.setItem(
+              'user',
+              JSON.stringify(person)
+            );
+          }
+        });
+      });
   };
 
-  // save user
-  const person = {
-    name: 'Obaseki Nosa',
-    location: 'Lagos',
-  };
-  const temp = window.localStorage.setItem('user', JSON.stringify(person));
+  // // save user
+  // const person = {
+  //   name: 'Obaseki Nosa',
+  //   location: 'Lagos',
+  // };
+  // const temp = window.localStorage.setItem('user', JSON.stringify(person));
 
   return (
     <div className="App container position-absolute top-50 start-50 translate-middle col-8">
@@ -36,9 +67,10 @@ function Login(env) {
                       Username:
                     </label>
                     <input
-                      type="email"
+                      type="text"
                       className="form-control"
-                      placeholder="Enter Email"
+                      placeholder="username"
+                      onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
                   <div className="mb-3">
@@ -50,6 +82,7 @@ function Login(env) {
                         type="password"
                         className="form-control"
                         placeholder="password"
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
                   </div>
@@ -60,15 +93,24 @@ function Login(env) {
                     Login
                   </button>
 
-                  {userList.map((val, key) => {
+                  {/* {userList.map((val, key) => {
                     return (
                       <div className="card">
-                        <div className="card-body text-left">
-                          <p className="card-text">Name: {val.first_name}</p>
-                        </div>
+                        <div className="card-body text-left"> */}
+                  {/* {username === val.username ? <p>yes</p> : <p>no</p>} */}
+                  {/* <p className="card-text">
+                            {username}: {val.username}
+                          </p>
+                          <p className="card-text">
+                            {password}: {val.password}
+                          </p>
+                          <p className="card-text">
+                            {role}: {val.role}
+                          </p> */}
+                  {/* </div>
                       </div>
                     );
-                  })}
+                  })} */}
                 </form>
               </div>
             </div>

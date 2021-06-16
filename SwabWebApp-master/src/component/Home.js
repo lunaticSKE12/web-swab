@@ -446,7 +446,7 @@ function Home() {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>serial number ใหม่</Modal.Title>
+          <Modal.Title>แก้ไขอุปกรณ์</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>

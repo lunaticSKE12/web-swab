@@ -25,6 +25,8 @@ export default function Orderform() {
   const [province, setProvince] = useState('');
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const year = dayjs().format('YY');
+  const month = dayjs().format('MM');
   const handleOnChange = () => {
     setIsChecked(!isChecked);
   };
@@ -37,7 +39,6 @@ export default function Orderform() {
   //     setCabinOrderList(response.data);
   //   });
   // };
-
   const addCabinOrder = () => {
     Axios.post('http://localhost:3003/create_cabin_order', {
       id: null,
@@ -58,6 +59,8 @@ export default function Orderform() {
       donate: isChecked,
       vendor_name: supplier,
       cabin_serial_number: serial,
+      year: year,
+      month: month,
     }).then(() => {
       setCabinOrderList([
         ...cabin_order_list,
@@ -80,6 +83,8 @@ export default function Orderform() {
           donate: isChecked,
           vendor_name: supplier,
           cabin_serial_number: serial,
+          year: year,
+          month: month,
         },
       ]);
     });
@@ -449,17 +454,6 @@ export default function Orderform() {
                 placeholder="ผู้ผลิต"
                 value={supplier}
                 onChange={(e) => setSupplier(e.target.value)}
-              />
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>เลขตู้</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="เลขตู้"
-                value={serial}
-                onChange={(e) => setSerial(e.target.value)}
               />
             </Form.Group>
           </Col>
