@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Jun 10, 2021 at 09:48 AM
+-- Generation Time: Jun 16, 2021 at 04:23 AM
 -- Server version: 5.7.32
 -- PHP Version: 7.4.12
 
@@ -39,8 +39,8 @@ CREATE TABLE `cabin_info` (
 
 INSERT INTO `cabin_info` (`id`, `created_at`, `region`, `cabin_type`, `cabin_tool`, `cabin_tool_name`, `cabin_spec`, `cabin_toot_amount`, `cabin_expired`, `cabin_toot_buy_from`) VALUES
 (1, '2021-06-05 14:49:33', 'N', 'P', 'LED', 'Phillips', '24W', 4, 3, 'homepro'),
-(21, '2021-06-07 15:57:56', 'N', 'ห้องความดันบวก Positive', 's', 's', 's', 2, 2, 'ws'),
-(22, '2021-06-07 16:02:19', 'N', 'ห้องความดันลบ Negative', 's', 's', 's', 2, 2, 's');
+(25, '2021-06-12 14:28:59', 'S', 'P', 'w', 'w', 'w', 2, 2, 'e'),
+(26, '2021-06-15 13:11:37', 'N', 'N', 'n', 'n', 'n', 2, 2, 'n');
 
 -- --------------------------------------------------------
 
@@ -106,7 +106,10 @@ CREATE TABLE `create_order` (
 --
 
 INSERT INTO `create_order` (`id`, `created_at`, `hospital_name`, `province`, `customer_name`, `customer_phone`, `customer_email`, `cabin_type`, `express`, `deliver_date`, `sequence`, `vendor_group`, `amount`, `donate`, `vendor_name`, `cabin_serial_number`) VALUES
-(1, '2021-06-05 14:45:59', 'รพ 1', '', 'ลูกค้า1', '08123456789', 'q@q.com', 'p', 'no', '2021-06-12', '1', 'N', 1, 'no', 'vendor 1', 'BKKP2106001');
+(1, '2021-06-05 14:45:59', 'รพ 1', '', 'ลูกค้า1', '08123456789', 'q@q.com', 'p', 'no', '2021-06-12', '1', 'N', 1, 'no', 'vendor 1', 'BKKP2106001'),
+(2, '2021-06-15 13:12:45', 'test', 'Bangkok', 'test', '0123453', 'a@a.con', 'N', 'ห้องความดันลบ Negative', '2021-06-25', '1', 'er', 2, 'No', 'erg', 'bkk2105005'),
+(3, '2021-06-16 10:41:48', 't', 'KKN', 't', 't', 't', 'P', 'ด่วน', '2021-06-25', 'e', 'e', 2, 'No', 'e', ''),
+(6, '2021-06-16 10:50:52', 'พ', 'CPM', 'พ', 'พ', 'พ', 'P', 'ด่วน', '2021-06-18', 'พ', 'พ', 1, '0', 'พ', 'พ');
 
 -- --------------------------------------------------------
 
@@ -184,7 +187,7 @@ ALTER TABLE `user_account`
 -- AUTO_INCREMENT for table `cabin_info`
 --
 ALTER TABLE `cabin_info`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `cabin_order`
@@ -196,7 +199,7 @@ ALTER TABLE `cabin_order`
 -- AUTO_INCREMENT for table `create_order`
 --
 ALTER TABLE `create_order`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -208,4 +211,4 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `user_account`
 --
 ALTER TABLE `user_account`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
