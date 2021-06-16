@@ -29,6 +29,18 @@ export default function Orderform() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  // Items
+  const [inputList, setInputList] = useState([
+    {
+      item: '',
+      brand: '',
+      spec: '',
+      quantity: '',
+      expiredate: '',
+      buy_from: '',
+    },
+  ]);
+
   // เก็บข็อมูลจาก api
   const [cabin_info, setCabin_info] = useState([]);
 
@@ -47,12 +59,13 @@ export default function Orderform() {
       created_at: now,
       region: region,
       cabin_type: cabin_type,
-      cabin_tool: comname,
-      cabin_tool_name: brand,
-      cabin_spec: spec,
-      cabin_toot_amount: quality,
-      cabin_expired: lifetime,
-      cabin_toot_buy_from: supplier,
+      cabin_tool: inputList,
+      // cabin_tool: comname,
+      // cabin_tool_name: brand,
+      // cabin_spec: spec,
+      // cabin_toot_amount: quality,
+      // cabin_expired: lifetime,
+      // cabin_toot_buy_from: supplier,
     }).then(() => {
       setCabin_info([
         ...cabin_info,
@@ -61,15 +74,46 @@ export default function Orderform() {
           created_at: now,
           region: region,
           cabin_type: cabin_type,
-          cabin_tool: comname,
-          cabin_tool_name: brand,
-          cabin_spec: spec,
-          cabin_toot_amount: quality,
-          cabin_expired: lifetime,
-          cabin_toot_buy_from: supplier,
+          cabin_tool: inputList,
+          // cabin_tool: comname,
+          // cabin_tool_name: brand,
+          // cabin_spec: spec,
+          // cabin_toot_amount: quality,
+          // cabin_expired: lifetime,
+          // cabin_toot_buy_from: supplier,
         },
       ]);
     });
+  };
+
+  // handle input change
+  const handleInputChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...inputList];
+    list[index][name] = value;
+    setInputList(list);
+  };
+
+  // handle click event of the Remove button
+  const handleRemoveClick = (index) => {
+    const list = [...inputList];
+    list.splice(index, 1);
+    setInputList(list);
+  };
+
+  // handle click event of the Add button
+  const handleAddClick = () => {
+    setInputList([
+      ...inputList,
+      {
+        item: '',
+        brand: '',
+        spec: '',
+        quantity: '',
+        expiredate: '',
+        buy_from: '',
+      },
+    ]);
   };
 
   return (
@@ -112,17 +156,85 @@ export default function Orderform() {
         </Row>
         <Row>
           <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <div className="App">
+              {inputList.map((x, i) => {
+                return (
+                  <div className="box">
+                    <Form.Label>อุปกรณ์ในตู้</Form.Label>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        name="item"
+                        placeholder="อุปกรณ์ เช่น หลอดไฟ"
+                        value={x.item}
+                        onChange={(e) => handleInputChange(e, i)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        name="brand"
+                        placeholder="ยี่ห้อ"
+                        value={x.brand}
+                        onChange={(e) => handleInputChange(e, i)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        name="spec"
+                        placeholder="spec เช่น 24W"
+                        value={x.spec}
+                        onChange={(e) => handleInputChange(e, i)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        name="quantity"
+                        placeholder="จำนวน"
+                        value={x.quantity}
+                        onChange={(e) => handleInputChange(e, i)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        name="expiredate"
+                        placeholder="อายุ เช่น 2 เดือน"
+                        value={x.expiredate}
+                        onChange={(e) => handleInputChange(e, i)}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        name="buy_from"
+                        placeholder="แหล่งที่ซื้อ"
+                        value={x.buy_from}
+                        onChange={(e) => handleInputChange(e, i)}
+                      />
+                    </Form.Group>
+                    <div className="btn-box">
+                      {inputList.length !== 1 && (
+                        <button onClick={() => handleRemoveClick(i)}>
+                          Remove
+                        </button>
+                      )}
+                      {inputList.length - 1 === i && (
+                        <button onClick={handleAddClick}>Add</button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>
+            </div>
+            {/* <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>เพิ่มอุปกรณ์ และ อายุการใช้งาน</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="อุปกรณ์ เช่น หลอดไฟ"
                 onChange={(e) => setComname(e.target.value)}
               />
-            </Form.Group>
+            </Form.Group> */}
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Control
@@ -176,7 +288,7 @@ export default function Orderform() {
               />
             </Form.Group>
           </Col>
-        </Row>
+        </Row> */}
       </Form>
       <Button onClick={handleShow}>Submit</Button>
       <Modal

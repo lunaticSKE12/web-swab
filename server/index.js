@@ -19,6 +19,7 @@ const db = mysql.createConnection({
   // port: "3306",
 });
 
+// Get all cabin
 app.get('/cabin_info', (req, res) => {
   db.query('SELECT * FROM cabin_info', (err, result) => {
     if (err) {
@@ -29,17 +30,18 @@ app.get('/cabin_info', (req, res) => {
   });
 });
 
+// Create tools
 app.post('/createComponent', (req, res) => {
   const id = req.body.id;
   const created_at = req.body.created_at;
   const region = req.body.region;
   const cabin_type = req.body.cabin_type;
   const cabin_tool = req.body.cabin_tool;
-  const cabin_tool_name = req.body.cabin_tool_name;
-  const cabin_spec = req.body.cabin_spec;
-  const cabin_toot_amount = req.body.cabin_toot_amount;
-  const cabin_expired = req.body.cabin_expired;
-  const cabin_toot_buy_from = req.body.cabin_toot_buy_from;
+  // const cabin_tool_name = req.body.cabin_tool_name;
+  // const cabin_spec = req.body.cabin_spec;
+  // const cabin_toot_amount = req.body.cabin_toot_amount;
+  // const cabin_expired = req.body.cabin_expired;
+  // const cabin_toot_buy_from = req.body.cabin_toot_buy_from;
 
   db.query(
     'INSERT INTO cabin_info (id, created_at,region, cabin_type, cabin_tool, cabin_tool_name, cabin_spec, cabin_toot_amount, cabin_expired, cabin_toot_buy_from) VALUES(?,?,?,?,?,?,?,?,?,?)',
@@ -49,11 +51,11 @@ app.post('/createComponent', (req, res) => {
       region,
       cabin_type,
       cabin_tool,
-      cabin_tool_name,
-      cabin_spec,
-      cabin_toot_amount,
-      cabin_expired,
-      cabin_toot_buy_from,
+      // cabin_tool_name,
+      // cabin_spec,
+      // cabin_toot_amount,
+      // cabin_expired,
+      // cabin_toot_buy_from,
     ],
     (err, result) => {
       if (err) {
@@ -64,6 +66,8 @@ app.post('/createComponent', (req, res) => {
     }
   );
 });
+
+// Create user
 app.post('/create_user_account', (req, res) => {
   const id = req.body.id;
   const first_name = req.body.first_name;
@@ -104,6 +108,7 @@ app.post('/create_user_account', (req, res) => {
   );
 });
 
+// Create order
 app.post('/create_cabin_order', (req, res) => {
   const id = req.body.id;
   const created_at = req.body.created_at;
@@ -152,6 +157,7 @@ app.post('/create_cabin_order', (req, res) => {
   );
 });
 
+// Get cabin order show in home
 app.get('/cabin_order', (req, res) => {
   db.query('SELECT * FROM cabin_order', (err, result) => {
     if (err) {

@@ -39,31 +39,27 @@ function Home() {
   const [cabin_info, setCabin_info] = useState([]);
   const [selectedId, setSelected] = useState('');
 
+  // show แจ้งซ่อม
+  const [showAlert, setShowAlert] = useState(false);
+  const [showInfo, setShowInfo] = useState(false); // Modal show tools
+
+  // all cabin order
   useEffect(() => {
     Axios.get('http://localhost:3003/create_order').then((response) => {
       setCabinOrderList(response.data);
     });
-  });
+  }, []);
 
-  // useEffect(() => {
-  //   Axios.get(`http://localhost:3003/selected_cabin_info/${cabin_type}`).then(
-  //     (response) => {
-  //       setCabin_info(
-  //         cabin_info.filter((val) => {
-  //           return val.cabin_type != cabin_type;
-  //         })
-  //       );
-  //     }
-  //   );
-  // });
-
+  // cabin tools detail
   const getSelectedCabin_info = (cabin_type) => {
+    console.log('cabin type ' + cabin_type);
     Axios.get(`http://localhost:3003/selected_cabin_info/${cabin_type}`).then(
       (response) => {
         setCabin_info(
-          cabin_info.filter((val) => {
-            return val.cabin_type != cabin_type;
-          })
+          response.data
+          // cabin_info.filter((val) => {
+          //   return val.cabin_type != cabin_type;
+          // })
         );
       }
     );
@@ -85,9 +81,6 @@ function Home() {
   //     setCabin_info(response.data);
   //   });
   // };
-
-  // show แจ้งซ่อม
-  const [showAlert, setShowAlert] = useState(false);
 
   return (
     <div className="container">
@@ -141,7 +134,6 @@ function Home() {
           <Dropdown.Item href="#/action-1">CSC เชียงใหม่</Dropdown.Item>
         </DropdownButton>
 
-        {/* <Button onClick={getCabinOrder}>show all data</Button> */}
         <Button variant="danger" onClick={() => setShowAlert(!showAlert)}>
           แจ้งซ่อม
         </Button>
@@ -156,7 +148,7 @@ function Home() {
       >
         <Tab eventKey="all" title="All">
           <Accordion defaultActiveKey="0">
-            <Card>
+            {/* <Card>
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
                   <Table responsive style={{ borderBottom: '2px' }}>
@@ -276,12 +268,22 @@ function Home() {
                   </Table>
                 </Card.Body>
               </Accordion.Collapse>
-            </Card>
+            </Card> */}
             {cabin_order_list.map((val, key) => {
               return (
-                <Card>
+                <Card key={val.cabin_serial_number}>
                   <Card.Header>
                     <Table responsive style={{ borderBottom: '2px' }}>
+                      <thead>
+                        <tr>
+                          <th>เลขตู้</th>
+                          <th>Vendor Name</th>
+                          <th>ประเภทตู้</th>
+                          <th>Status วันที่</th>
+                          <th>ข้อมูลลูกค้า</th>
+                          <th>วันที่ ส่ง</th>
+                        </tr>
+                      </thead>
                       <tbody>
                         <tr style={{ borderBottom: '2px' }}>
                           <td>
@@ -290,8 +292,9 @@ function Home() {
                               variant="link"
                               eventKey="3"
                               onClick={() => {
-                                console.log(val.cabin_type);
+                                console.log('cabin type ' + val.cabin_type);
                                 getSelectedCabin_info(val.cabin_type);
+                                setShowInfo(!showInfo);
                               }}
                             >
                               <FontAwesomeIcon icon={faCaretDown} />
@@ -311,48 +314,57 @@ function Home() {
                       </tbody>
                     </Table>
                   </Card.Header>
-                  <Accordion.Collapse eventKey="3">
-                    <Card.Body>
-                      <Table responsive style={{ borderBottom: '2px' }}>
-                        <thead>
-                          <tr style={{ borderBottom: '2px' }}>
-                            <th>ประเภทห้อง</th>
-                            <th>อุปกรณ์</th>
-                            <th>ยี่ห้อ</th>
-                            <th>spec</th>
-                            <th>จำนวน</th>
-                            <th>วันที่เปลี่ยนล่าสุด</th>
-                            <th>แหล่งที่ซื้อ</th>
-                            <th>กำหนดเปลี่ยนครั้งถัดไป</th>
-                            <th> </th>
-                          </tr>
-                        </thead>
-                        {cabin_info.map((val, key) => {
-                          return (
-                            <tbody>
-                              <tr style={{ borderBottom: '2px' }}>
-                                <td>{val.cabin_type}</td>
-                                <td>{val.cabin_tool}</td>
-                                <td>{val.cabin_tool_name}</td>
-                                <td>{val.cabin_spec}</td>
-                                <td>{val.cabin_toot_amount}</td>
-                                <td>{val.cabin_expired}</td>
-                                <th> {val.cabin_toot_buy_from}</th>
-                                <td>{val.cabin_expired}</td>
-
-                                <th>
-                                  <Button onClick={handleShow}>แก้ไข</Button>{' '}
-                                </th>
-                              </tr>
-                            </tbody>
-                          );
-                        })}
-                      </Table>
-                    </Card.Body>
-                  </Accordion.Collapse>
                 </Card>
               );
             })}
+            <Modal
+              size="xl"
+              show={showInfo}
+              onHide={() => setShowInfo(!showInfo)}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>รายละเอียด</Modal.Title>
+              </Modal.Header>
+              <Card.Body>
+                <Table responsive style={{ borderBottom: '2px' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '2px' }}>
+                      <th>ประเภทห้อง</th>
+                      <th>อุปกรณ์</th>
+                      <th>ยี่ห้อ</th>
+                      <th>spec</th>
+                      <th>จำนวน</th>
+                      <th>วันที่เปลี่ยนล่าสุด</th>
+                      <th>แหล่งที่ซื้อ</th>
+                      <th>กำหนดเปลี่ยนครั้งถัดไป</th>
+                      <th> </th>
+                    </tr>
+                  </thead>
+                  {cabin_info.map((val, key) => {
+                    return (
+                      <tbody>
+                        <tr style={{ borderBottom: '2px' }}>
+                          <td>{val.cabin_type}</td>
+                          <td>{val.cabin_tool}</td>
+                          <td>{val.cabin_tool_name}</td>
+                          <td>{val.cabin_spec}</td>
+                          <td>{val.cabin_toot_amount}</td>
+                          <td>{val.cabin_expired}</td>
+                          <th> {val.cabin_toot_buy_from}</th>
+                          <td>{val.cabin_expired}</td>
+
+                          <th>
+                            <Button onClick={handleShow}>แก้ไข</Button>{' '}
+                          </th>
+                        </tr>
+                      </tbody>
+                    );
+                  })}
+                </Table>
+              </Card.Body>
+            </Modal>
           </Accordion>
         </Tab>
         <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่"></Tab>
@@ -410,7 +422,7 @@ function Home() {
                   <Form.Label>วันที่</Form.Label>
                   <input
                     type="date"
-                    class="form-control"
+                    className="form-control"
                     value={sendDate}
                     onChange={(e) => setSendDate(e.target.value)}
                   ></input>
