@@ -210,8 +210,9 @@ app.post('/create_cabin_order', (req, res) => {
       } else {
         console.log(' ==0', result);
         console.log(result.length);
-        if (result[0]['Code'] === 'null') {
+        if (result[0]['Code'] === null) {
           console.log(' == null', result);
+          console.log(' == null passsss', result);
           const gencode = code + '001';
           db.query(
             'INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
@@ -381,16 +382,29 @@ app.get('/cabin_order', (req, res) => {
   });
 });
 
-app.get('/selected_cabin_info/:cabin_type', (req, res) => {
-  const cabin_type = req.params.cabin_type;
+app.get('/selected_cabin_info/:cabin_serial_number', (req, res) => {
+  const cabin_serial_number = req.params.cabin_serial_number;
+  console.log(cabin_serial_number);
   db.query(
-    'SELECT * FROM cabin_info WHERE cabin_type = ?',
-    cabin_type,
+    'SELECT id FROM create_order WHERE cabin_serial_number = ?',
+    cabin_serial_number,
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        res.send(result);
+        console.log(result);
+        db.query(
+          'SELECT * FROM item_in_order WHERE order_id = ?',
+          result[0]['id'],
+          (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              res.send(result);
+            }
+          }
+        );
       }
     }
   );
@@ -441,6 +455,8 @@ app.get('/user_account', (req, res) => {
     }
   });
 });
+
+// app.put('/editTool/:id',(req,res)=>{})ss
 
 app.get('/login', (req, res) => {
   db.query(

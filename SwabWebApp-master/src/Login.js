@@ -32,6 +32,7 @@ function Login(env) {
         userList.map((val, key) => {
           if (username === val.username && password === val.password) {
             console.log('yes');
+            // save user
             const person = {
               username: username,
               region: val.region,
@@ -41,6 +42,8 @@ function Login(env) {
               'user',
               JSON.stringify(person)
             );
+
+            window.location.href = '/home';
           }
         });
       });

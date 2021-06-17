@@ -13,24 +13,13 @@ import Axios from 'axios';
 import { useState } from 'react';
 import { Accordion, Col, Form, Modal, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import dayjs from 'dayjs';
 import {
   faFilter,
   faSearch,
   faUserAlt,
   faCaretDown,
 } from '@fortawesome/free-solid-svg-icons';
-
-// Send mail
-const nodemailer = require('nodemailer');
-let transporter = nodemailer.createTransport({
-  host: 'gmail',
-  service: 'Gmail',
-  auth: {
-    user: 'alert.cabin.swab@gmail.com',
-    pass: 'AlertCabin',
-  },
-});
 
 function Home() {
   const [key, setKey] = useState('all');
@@ -48,6 +37,7 @@ function Home() {
   const [cabin_broken_order_list, setBrokenCabinOrderList] = useState([]);
   const [cabin_info, setCabin_info] = useState([]);
   const [selectedId, setSelected] = useState('');
+  const [toolId, setToolId] = useState('');
 
   // รายละเอียดแจ้งซ่อม
   const [alert, setAlert] = useState([]);
@@ -99,14 +89,16 @@ function Home() {
     );
   };
 
+  // ส่งข้อมูลแจ้งซ่อม
   const getSelectedBrokenCabin_info = (cabin_serial_number) => {
     Axios.get(
       `http://localhost:3003/selected_Broken_cabin_info/${cabin_serial_number}`
     ).then((response) => {
       setBrokenCabinOrderList(
-        cabin_order_list.filter((val) => {
-          return val.cabin_serial_number != cabin_serial_number;
-        })
+        response.data
+        // cabin_order_list.filter((val) => {
+        //   return val.cabin_serial_number != cabin_serial_number;
+        // })
       );
     });
   };
@@ -116,73 +108,87 @@ function Home() {
   //   });
   // };
 
+  // ส่งข้อมูล edit อุปกรณ์ ***********************
+  const editTool = (id) => {
+    Axios.put(`http://localhost:3003/editTool/${id}`, {}).then(() => {
+      setCabin_info([...cabin_info, {}]);
+    });
+  };
+
   return (
     <div className="container">
-      <CardGroup className="mt-3 ">
-        <Card className="bg-light">
-          <Card.Body>
-            <Card.Title className="text-center">จำนวนตู้ทั้งหมด</Card.Title>
-            <Card.Text>
-              <p className="text-success fs-1 text-center">1234</p>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-        <Card className="bg-light">
-          <Card.Body>
-            <Card.Title className="text-center">
-              จำนวนตู้ที่ต้องเปลี่ยนอะไหล่
-            </Card.Title>
-            <Card.Text>
-              <p className="text-warning fs-1 text-center">123</p>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-        <Card className="bg-light">
-          <Card.Body>
-            <Card.Title className="text-center">จำนวนตู้ที่แจ้งซ่อม</Card.Title>
-            <Card.Text>
-              <p className="text-danger fs-1 text-center">12</p>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-      </CardGroup>
-      <ButtonGroup className="mt-3">
-        <DropdownButton
-          size="lg"
-          className="mr-2"
-          variant="outline-primary"
-          id="dropdown-basic-button"
-          title="ภาค"
-        >
-          <Dropdown.Item href="#/action-1">N</Dropdown.Item>
-          <Dropdown.Item href="#/action-2">NE </Dropdown.Item>
-          <Dropdown.Item href="#/action-3">S</Dropdown.Item>
-        </DropdownButton>
-        <DropdownButton
-          size="lg"
-          className="mr-2"
-          variant="outline-primary"
-          id="dropdown-basic-button"
-          title="CSC"
-        >
-          <Dropdown.Item href="#/action-1">CSC เชียงใหม่</Dropdown.Item>
-        </DropdownButton>
+      {/* check login */}
+      {typeof user !== 'string' ? (
+        <p>login first</p>
+      ) : (
+        <div>
+          <CardGroup className="mt-3 ">
+            <Card className="bg-light">
+              <Card.Body>
+                <Card.Title className="text-center">จำนวนตู้ทั้งหมด</Card.Title>
+                <Card.Text>
+                  <p className="text-success fs-1 text-center">1234</p>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+            <Card className="bg-light">
+              <Card.Body>
+                <Card.Title className="text-center">
+                  จำนวนตู้ที่ต้องเปลี่ยนอะไหล่
+                </Card.Title>
+                <Card.Text>
+                  <p className="text-warning fs-1 text-center">123</p>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+            <Card className="bg-light">
+              <Card.Body>
+                <Card.Title className="text-center">
+                  จำนวนตู้ที่แจ้งซ่อม
+                </Card.Title>
+                <Card.Text>
+                  <p className="text-danger fs-1 text-center">12</p>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </CardGroup>
+          <ButtonGroup className="mt-3">
+            <DropdownButton
+              size="lg"
+              className="mr-2"
+              variant="outline-primary"
+              id="dropdown-basic-button"
+              title="ภาค"
+            >
+              <Dropdown.Item href="#/action-1">N</Dropdown.Item>
+              <Dropdown.Item href="#/action-2">NE </Dropdown.Item>
+              <Dropdown.Item href="#/action-3">S</Dropdown.Item>
+            </DropdownButton>
+            <DropdownButton
+              size="lg"
+              className="mr-2"
+              variant="outline-primary"
+              id="dropdown-basic-button"
+              title="CSC"
+            >
+              <Dropdown.Item href="#/action-1">CSC เชียงใหม่</Dropdown.Item>
+            </DropdownButton>
 
-        <Button variant="danger" onClick={() => setShowAlert(!showAlert)}>
-          แจ้งซ่อม
-        </Button>
-      </ButtonGroup>
+            <Button variant="danger" onClick={() => setShowAlert(!showAlert)}>
+              แจ้งซ่อม
+            </Button>
+          </ButtonGroup>
 
-      {/* tab all */}
-      <Tabs
-        id="controlled-tab-example"
-        activeKey={key}
-        onSelect={(k) => setKey(k)}
-        className="mb-3 mt-3"
-      >
-        <Tab eventKey="all" title="All">
-          <Accordion defaultActiveKey="0">
-            {/* <Card>
+          {/* tab all */}
+          <Tabs
+            id="controlled-tab-example"
+            activeKey={key}
+            onSelect={(k) => setKey(k)}
+            className="mb-3 mt-3"
+          >
+            <Tab eventKey="all" title="All">
+              <Accordion defaultActiveKey="0">
+                {/* <Card>
               <Accordion.Collapse eventKey="1">
                 <Card.Body>
                   <Table responsive style={{ borderBottom: '2px' }}>
@@ -303,240 +309,252 @@ function Home() {
                 </Card.Body>
               </Accordion.Collapse>
             </Card> */}
-            {cabin_order_list.map((val, key) => {
-              return (
-                <Card key={val.cabin_serial_number}>
-                  <Card.Header>
-                    <Table responsive style={{ borderBottom: '2px' }}>
-                      <thead>
-                        <tr>
-                          <th>เลขตู้</th>
-                          <th>Vendor Name</th>
-                          <th>ประเภทตู้</th>
-                          <th>Status วันที่</th>
-                          <th>ข้อมูลลูกค้า</th>
-                          <th>วันที่ ส่ง</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr style={{ borderBottom: '2px' }}>
-                          <td>
-                            <Accordion.Toggle
-                              as={Button}
-                              variant="link"
-                              eventKey="3"
-                              onClick={() => {
-                                console.log('cabin type ' + val.cabin_type);
-                                getSelectedCabin_info(val.cabin_type);
-                                setShowInfo(!showInfo);
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faCaretDown} />
-                            </Accordion.Toggle>
-                            {val.cabin_serial_number}
-                          </td>
-                          <td>{val.vendor_name}</td>
-                          <td>{val.cabin_type}</td>
-                          <td>{val.created_at}</td>
-                          <td>
-                            {val.hospital_name} {val.customer_name}
-                            {val.customer_phone} <br />
-                            {val.customer_email}
-                          </td>
-                          <td>{val.deliver_date}</td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </Card.Header>
-                </Card>
-              );
-            })}
-            <Modal
-              size="xl"
-              show={showInfo}
-              onHide={() => setShowInfo(!showInfo)}
-              backdrop="static"
-              keyboard={false}
-            >
-              <Modal.Header closeButton>
-                <Modal.Title>รายละเอียด</Modal.Title>
-              </Modal.Header>
-              <Card.Body>
-                <Table responsive style={{ borderBottom: '2px' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '2px' }}>
-                      <th>ประเภทห้อง</th>
-                      <th>อุปกรณ์</th>
-                      <th>ยี่ห้อ</th>
-                      <th>spec</th>
-                      <th>จำนวน</th>
-                      <th>วันที่เปลี่ยนล่าสุด</th>
-                      <th>แหล่งที่ซื้อ</th>
-                      <th>กำหนดเปลี่ยนครั้งถัดไป</th>
-                      <th> </th>
-                    </tr>
-                  </thead>
-                  {cabin_info.map((val, key) => {
-                    return (
-                      <tbody>
-                        <tr style={{ borderBottom: '2px' }}>
-                          <td>{val.cabin_type}</td>
-                          <td>{val.cabin_tool}</td>
-                          <td>{val.cabin_tool_name}</td>
-                          <td>{val.cabin_spec}</td>
-                          <td>{val.cabin_toot_amount}</td>
-                          <td>{val.cabin_expired}</td>
-                          <th> {val.cabin_toot_buy_from}</th>
-                          <td>{val.cabin_expired}</td>
+                {cabin_order_list.map((val, key) => {
+                  const created_at = dayjs(val.created_at).format('YYYY-MM-DD');
+                  const deliver_date = dayjs(val.deliver_date).format(
+                    'YYYY-MM-DD'
+                  );
 
-                          <th>
-                            <Button onClick={handleShow}>แก้ไข</Button>{' '}
-                          </th>
-                        </tr>
-                      </tbody>
-                    );
-                  })}
-                </Table>
-              </Card.Body>
-            </Modal>
-          </Accordion>
-        </Tab>
-        <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่"></Tab>
-        <Tab
-          eventKey="alert"
-          title={
-            <div>
-              แจ้งซ่อม <Badge style={{ background: 'red' }}>9</Badge>
-              <span className="visually-hidden">unread messages</span>
-            </div>
-          }
-        >
-          <Table style={{ width: '100%' }}>
-            <Card>
-              <Card.Header>
-                <thead>
-                  <tr>
-                    <th>Serial number</th>
-                    <th>ชื่อโรงพยาบาล</th>
-                    <th>รายละเอียด</th>
-                  </tr>
-                </thead>
-                {cabin_broken_order_list.map((val, key) => {
                   return (
-                    <tbody>
-                      <tr>
-                        <th>{val.cabin_serial_number}</th>
-                        <th>{val.hospital_name}</th>
-                        <th></th>
-                      </tr>
-                    </tbody>
+                    <Card key={val.cabin_serial_number}>
+                      <Card.Header>
+                        <Table responsive style={{ borderBottom: '2px' }}>
+                          <thead>
+                            <tr>
+                              <th>เลขตู้</th>
+                              <th>Vendor Name</th>
+                              <th>ประเภทตู้</th>
+                              <th>Status วันที่</th>
+                              <th>ข้อมูลลูกค้า</th>
+                              <th>วันที่ ส่ง</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr style={{ borderBottom: '2px' }}>
+                              <td>
+                                <Accordion.Toggle
+                                  as={Button}
+                                  variant="link"
+                                  eventKey="3"
+                                  onClick={() => {
+                                    console.log('cabin type ' + val.cabin_type);
+                                    getSelectedCabin_info(val.cabin_type);
+                                    setShowInfo(!showInfo);
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faCaretDown} />
+                                </Accordion.Toggle>
+                                {val.cabin_serial_number}
+                              </td>
+                              <td>{val.vendor_name}</td>
+                              <td>{val.cabin_type}</td>
+                              <td>{created_at}</td>
+                              <td>
+                                {val.hospital_name} {val.customer_name}
+                                {val.customer_phone} <br />
+                                {val.customer_email}
+                              </td>
+                              <td>{deliver_date}</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Card.Header>
+                    </Card>
                   );
                 })}
-              </Card.Header>
-            </Card>
-          </Table>
-        </Tab>
-      </Tabs>
+                <Modal
+                  size="xl"
+                  show={showInfo}
+                  onHide={() => setShowInfo(!showInfo)}
+                  backdrop="static"
+                  keyboard={false}
+                >
+                  <Modal.Header closeButton>
+                    <Modal.Title>รายละเอียด</Modal.Title>
+                  </Modal.Header>
+                  <Card.Body>
+                    <Table responsive style={{ borderBottom: '2px' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '2px' }}>
+                          <th>ประเภทห้อง</th>
+                          <th>อุปกรณ์</th>
+                          <th>ยี่ห้อ</th>
+                          <th>spec</th>
+                          <th>จำนวน</th>
+                          <th>วันที่เปลี่ยนล่าสุด</th>
+                          <th>แหล่งที่ซื้อ</th>
+                          <th>กำหนดเปลี่ยนครั้งถัดไป</th>
+                          <th> </th>
+                        </tr>
+                      </thead>
+                      {cabin_info.map((val, key) => {
+                        return (
+                          <tbody>
+                            <tr style={{ borderBottom: '2px' }}>
+                              <td>{val.cabin_type}</td>
+                              <td>{val.cabin_tool}</td>
+                              <td>{val.cabin_tool_name}</td>
+                              <td>{val.cabin_spec}</td>
+                              <td>{val.cabin_toot_amount}</td>
+                              <td>{val.cabin_expired}</td>
+                              <th>{val.cabin_toot_buy_from}</th>
+                              <td>{val.cabin_expired}</td>
 
-      {/* modal แก้ไข */}
-      <Modal
-        show={show}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>แก้ไขอุปกรณ์</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>วันที่</Form.Label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={sendDate}
-                    onChange={(e) => setSendDate(e.target.value)}
-                  ></input>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>เพิ่มอุปกรณ์ และ อายุการใช้งาน</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="อุปกรณ์ เช่น หลอดไฟ"
-                    value={comname}
-                    onChange={(e) => setComname(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Control
-                    type="text"
-                    placeholder="ยี่ห้อ"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Control
-                    type="text"
-                    placeholder="spec เช่น 24W"
-                    value={spec}
-                    onChange={(e) => setSpec(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Control
-                    type="text"
-                    placeholder="จำนวน"
-                    value={quality}
-                    onChange={(e) => setQuality(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Control
-                    type="text"
-                    placeholder="อายุ เช่น 2 เดือน"
-                    value={lifetime}
-                    onChange={(e) => setLifetime(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Control
-                    type="text"
-                    placeholder="แหล่งที่ซื้อ"
-                    value={supplier}
-                    onChange={(e) => setSupplier(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            {/* <Row>
+                              <th>
+                                <Button
+                                  onClick={() => {
+                                    handleShow();
+                                    setToolId(val.id);
+                                  }}
+                                >
+                                  แก้ไข
+                                </Button>{' '}
+                              </th>
+                            </tr>
+                          </tbody>
+                        );
+                      })}
+                    </Table>
+                  </Card.Body>
+                </Modal>
+              </Accordion>
+            </Tab>
+            <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่"></Tab>
+            <Tab
+              eventKey="alert"
+              title={
+                <div>
+                  แจ้งซ่อม <Badge style={{ background: 'red' }}>9</Badge>
+                  <span className="visually-hidden">unread messages</span>
+                </div>
+              }
+            >
+              <Table style={{ width: '100%' }}>
+                <Card>
+                  <Card.Header>
+                    <thead>
+                      <tr>
+                        <th>Serial number</th>
+                        <th>ชื่อโรงพยาบาล</th>
+                        <th>รายละเอียด</th>
+                      </tr>
+                    </thead>
+                    {cabin_broken_order_list.map((val, key) => {
+                      return (
+                        <tbody>
+                          <tr>
+                            <th>{val.cabin_serial_number}</th>
+                            <th>{val.hospital_name}</th>
+                            <th></th>
+                          </tr>
+                        </tbody>
+                      );
+                    })}
+                  </Card.Header>
+                </Card>
+              </Table>
+            </Tab>
+          </Tabs>
+
+          {/* modal แก้ไข */}
+          <Modal
+            show={show}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>แก้ไขอุปกรณ์ {toolId}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Label>วันที่</Form.Label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={sendDate}
+                        onChange={(e) => setSendDate(e.target.value)}
+                      ></input>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Label>เพิ่มอุปกรณ์ และ อายุการใช้งาน</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="อุปกรณ์ เช่น หลอดไฟ"
+                        value={comname}
+                        onChange={(e) => setComname(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        type="text"
+                        placeholder="ยี่ห้อ"
+                        value={brand}
+                        onChange={(e) => setBrand(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        type="text"
+                        placeholder="spec เช่น 24W"
+                        value={spec}
+                        onChange={(e) => setSpec(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        type="text"
+                        placeholder="จำนวน"
+                        value={quality}
+                        onChange={(e) => setQuality(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        type="text"
+                        placeholder="อายุ เช่น 2 เดือน"
+                        value={lifetime}
+                        onChange={(e) => setLifetime(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        type="text"
+                        placeholder="แหล่งที่ซื้อ"
+                        value={supplier}
+                        onChange={(e) => setSupplier(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                {/* <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>รายละเอียดเฉพาะกรณีมีการแจ้งซ่อม</Form.Label>
@@ -549,106 +567,109 @@ function Home() {
                 </Form.Group>
               </Col>
             </Row> */}
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            Submit
-          </Button>
-        </Modal.Footer>
-      </Modal>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  handleClose();
+                }}
+              >
+                Submit
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
-      {/* modal แจ้งซ่อม */}
-      <Modal
-        show={showAlert}
-        onHide={() => setShowAlert(!showAlert)}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>แจ้งซ่อม</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>โรงพยาบาล</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="ชื่อโรงพยาบาล"
-                    value={hospitalName}
-                    onChange={(e) => setHospitalName(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Control
-                    type="text"
-                    placeholder="serial number"
-                    value={cabin_serial}
-                    onChange={(e) => setCabin_Serial(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="region">
-                  <Form.Label>ภาค</Form.Label>
-                  <select
-                    className="form-control"
-                    id="region"
-                    onChange={(e) => setRegion(e.target.value)}
-                  >
-                    <option value="">เลือกภาค</option>
-                    <option value="C">Central</option>
-                    <option value="N">North</option>
-                    <option value="S">South</option>
-                    <option value="E">Central East</option>
-                    <option value="W">Central West</option>
-                    <option value="NE">Northeast</option>
-                  </select>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3" controlId="ControlTextarea1">
-                  <Form.Label>รายละเอียด</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    type="text"
-                    placeholder="รายละเอียด"
-                    onChange={(e) => setDetail(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="primary"
-            onClick={() => {
-              setShowAlert(!showAlert);
-              getSelectedBrokenCabin_info(cabin_serial);
-              console.log(cabin_serial);
-            }}
+          {/* modal แจ้งซ่อม */}
+          <Modal
+            show={showAlert}
+            onHide={() => setShowAlert(!showAlert)}
+            backdrop="static"
+            keyboard={false}
           >
-            Submit
-          </Button>
-        </Modal.Footer>
-      </Modal>
+            <Modal.Header closeButton>
+              <Modal.Title>แจ้งซ่อม</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Label>โรงพยาบาล</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="ชื่อโรงพยาบาล"
+                        value={hospitalName}
+                        onChange={(e) => setHospitalName(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Control
+                        type="text"
+                        placeholder="serial number"
+                        value={cabin_serial}
+                        onChange={(e) => setCabin_Serial(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="region">
+                      <Form.Label>ภาค</Form.Label>
+                      <select
+                        className="form-control"
+                        id="region"
+                        onChange={(e) => setRegion(e.target.value)}
+                      >
+                        <option value="">เลือกภาค</option>
+                        <option value="C">Central</option>
+                        <option value="N">North</option>
+                        <option value="S">South</option>
+                        <option value="E">Central East</option>
+                        <option value="W">Central West</option>
+                        <option value="NE">Northeast</option>
+                      </select>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="ControlTextarea1">
+                      <Form.Label>รายละเอียด</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        type="text"
+                        placeholder="รายละเอียด"
+                        onChange={(e) => setDetail(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowAlert(!showAlert);
+                  getSelectedBrokenCabin_info(cabin_serial);
+                  console.log(cabin_serial);
+                  // sendAlert();
+                }}
+              >
+                Submit
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      )}
     </div>
   );
 }

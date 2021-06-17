@@ -1,7 +1,7 @@
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import styled from 'styled-components';
-
+import Button from 'react-bootstrap/Button';
 const Styles = styled.div`
   .navbar {
     background: #343a40;
@@ -18,6 +18,13 @@ const Styles = styled.div`
   }
 `;
 
+const logout = () => {
+  // remove user
+  window.localStorage.removeItem('user');
+
+  window.location.href = '/';
+};
+
 export const NavigationBar = () => (
   <Styles>
     <Navbar expand="lg" bg="dark" variant="dark">
@@ -30,6 +37,11 @@ export const NavigationBar = () => (
           <Nav.Link href="/addaccount">เพิ่ม / ลบ Account</Nav.Link>
           <Nav.Link href="/addcomponent">เพิ่ม / ลบ อุปกรณ์</Nav.Link>
         </Nav>
+        <Navbar.Text>
+          <Button className="ml-1" variant="danger" onClick={logout}>
+            Logout
+          </Button>
+        </Navbar.Text>
       </Navbar.Collapse>
     </Navbar>
   </Styles>

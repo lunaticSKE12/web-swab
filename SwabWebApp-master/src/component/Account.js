@@ -22,6 +22,9 @@ import {
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+// check login
+const user = window.localStorage.getItem('user');
+console.log(typeof user);
 export default function Account() {
   const [show, setShow] = useState(false);
   const [accountlist, setAccountList] = useState([]);
@@ -53,9 +56,13 @@ export default function Account() {
 
   return (
     <Container>
-      <Form>
-        <Row>
-          {/* <Button>
+      {typeof user !== 'string' ? (
+        <p>login first</p>
+      ) : (
+        <div>
+          <Form>
+            <Row>
+              {/* <Button>
             <FontAwesomeIcon icon={faFilter} /> Filter
           </Button>
 
@@ -65,32 +72,32 @@ export default function Account() {
             placeholder="&#xF007;Search"
             style={{ width: '30%' }}
           /> */}
-          <Link to="/Accountform">
-            <Button style={{ marginLeft: '.5rem' }}>
-              <FontAwesomeIcon icon={faUserAlt} /> เพิ่ม Account
-            </Button>
-          </Link>
-          <Button style={{ marginLeft: '.5rem' }} onClick={getAccount}>
-            Refresh
-          </Button>
-        </Row>
-      </Form>
-      <br />
-      <div>
-        <Table responsive style={{ widows: '100%' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px' }}>
-              <th>Name</th>
-              <th>e-mail</th>
-              <th>เบอโทรติดต่อ</th>
-              <th>E-mail supervisor</th>
-              <th>ภาค</th>
-              <th>role</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* <tr style={{ borderBottom: '2px' }}>
+              <Link to="/Accountform">
+                <Button style={{ marginLeft: '.5rem' }}>
+                  <FontAwesomeIcon icon={faUserAlt} /> เพิ่ม Account
+                </Button>
+              </Link>
+              <Button style={{ marginLeft: '.5rem' }} onClick={getAccount}>
+                Refresh
+              </Button>
+            </Row>
+          </Form>
+          <br />
+          <div>
+            <Table responsive style={{ widows: '100%' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px' }}>
+                  <th>Name</th>
+                  <th>e-mail</th>
+                  <th>เบอโทรติดต่อ</th>
+                  <th>E-mail supervisor</th>
+                  <th>ภาค</th>
+                  <th>role</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* <tr style={{ borderBottom: '2px' }}>
               <td>Justin Septimus</td>
               <td>example@email.com</td>
               <td>08123456789</td>
@@ -104,35 +111,35 @@ export default function Account() {
                 </Button>
               </td>
             </tr> */}
-            {accountlist.map((val, key) => {
-              return (
-                <tr>
-                  <td>
-                    {val.first_name} {val.last_name}
-                  </td>
-                  <td>{val.email}</td>
-                  <td>{val.phone_number}</td>
-                  <td>{val.supervisor_email}</td>
-                  <td>{val.region}</td>
-                  <td>{val.role}</td>
-                  <td>
-                    {' '}
-                    <Button
-                      variant="danger"
-                      onClick={() => {
-                        deleteAccount(val.id);
-                      }}
-                    >
-                      ลบ account
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-      </div>
-      {/* <Card>
+                {accountlist.map((val, key) => {
+                  return (
+                    <tr>
+                      <td>
+                        {val.first_name} {val.last_name}
+                      </td>
+                      <td>{val.email}</td>
+                      <td>{val.phone_number}</td>
+                      <td>{val.supervisor_email}</td>
+                      <td>{val.region}</td>
+                      <td>{val.role}</td>
+                      <td>
+                        {' '}
+                        <Button
+                          variant="danger"
+                          onClick={() => {
+                            deleteAccount(val.id);
+                          }}
+                        >
+                          ลบ account
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+          {/* <Card>
         <Card.Header>
           <Table responsive style={{ borderBottom: "2px" }}>
             <tbody>
@@ -148,6 +155,8 @@ export default function Account() {
           </Table>
         </Card.Header>
       </Card> */}
+        </div>
+      )}
     </Container>
   );
 }

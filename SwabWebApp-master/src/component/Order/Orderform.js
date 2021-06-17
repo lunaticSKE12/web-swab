@@ -89,6 +89,7 @@ export default function Orderform() {
       ]);
     });
   };
+
   return (
     <Container style={{ backgroundColor: 'white !important' }}>
       <Form>
@@ -153,21 +154,7 @@ export default function Orderform() {
                 <option value="">เลือกประเภทห้อง</option>
                 <option value="P">ห้องความดันบวก Positive</option>
                 <option value="N">ห้องความดันลบ Negative</option>
-              </select>
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>ด่วนหรือไม่</Form.Label>
-              <select
-                className="form-control"
-                id="paymentMethod"
-                value={need}
-                onChange={(e) => setNeed(e.target.value)}
-              >
-                <option value="">เลือกความต้องการ</option>
-                <option value="ด่วน">ด่วน</option>
-                <option value="ไม่ด่วน">ไม่ด่วน</option>
+                <option value="M">Mobile</option>
               </select>
             </Form.Group>
           </Col>
@@ -396,30 +383,7 @@ export default function Orderform() {
         </Row>
 
         <br></br>
-        <Row>
-          <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>ลำดับการส่ง</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder=""
-                value={rangeSend}
-                onChange={(e) => setRangeSend(e.target.value)}
-              />
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Group</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Group"
-                value={group}
-                onChange={(e) => setGroup(e.target.value)}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -430,18 +394,6 @@ export default function Orderform() {
                 value={quality}
                 onChange={(e) => setQuality(e.target.value)}
               />
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>บริจาค</Form.Label>
-              <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Check
-                  type="checkbox"
-                  label="บริจาค"
-                  onChange={handleOnChange}
-                />
-              </Form.Group>
             </Form.Group>
           </Col>
         </Row>
@@ -481,15 +433,11 @@ export default function Orderform() {
           <p>เบอร์ติดต่อลูกค้า : {phoneNum}</p>
           <p>email : {email}</p>
           <p>ประเภทห้อง : {roomType}</p>
-          <p>ด่วน : {need}</p>
           <p>วันที่ต้องส่งมอบ : {sendDate}</p>
           <p>
             จังหวัด : {textProvince} {province}
           </p>
-          <p>ลำดับการส่ง : {rangeSend}</p>
-          <p>Group : {group}</p>
           <p>จำนวน : {quality}</p>
-          <p>บริจาคหรือไม่ : {isChecked ? 'ใช่' : 'ไม่'}</p>
           <p>ผู้ผลิค : {supplier}</p>
         </Modal.Body>
         <Modal.Footer>
