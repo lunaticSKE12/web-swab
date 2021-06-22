@@ -61,6 +61,8 @@ export default function Orderform() {
       cabin_serial_number: serial,
       year: year,
       month: month,
+      status: 'normal',
+      detail: '',
     }).then(() => {
       setCabinOrderList([
         ...cabin_order_list,
@@ -85,6 +87,8 @@ export default function Orderform() {
           cabin_serial_number: serial,
           year: year,
           month: month,
+          status: 'normal',
+          detail: '',
         },
       ]);
     });

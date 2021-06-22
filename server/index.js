@@ -198,7 +198,8 @@ app.post('/create_cabin_order', (req, res) => {
   const cabin_serial_number = req.body.cabin_serial_number;
   const year = req.body.year;
   const month = req.body.month;
-
+  const status = req.body.status;
+  const detail = req.body.detail;
   const code = province + cabin_type + year + month;
   console.log(code);
   db.query(
@@ -213,9 +214,10 @@ app.post('/create_cabin_order', (req, res) => {
         if (result[0]['Code'] === null) {
           console.log(' == null', result);
           console.log(' == null passsss', result);
+          console.log(' ==================', status);
           const gencode = code + '001';
           db.query(
-            'INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            `INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number,cabin_status,cabin_error_detail) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
             [
               id,
               created_at,
@@ -235,6 +237,8 @@ app.post('/create_cabin_order', (req, res) => {
               donate,
               vendor_name,
               gencode,
+              status,
+              detail,
             ],
             (err, result) => {
               if (err) {
@@ -292,8 +296,9 @@ app.post('/create_cabin_order', (req, res) => {
 
           const gennerate = result[0]['Code'];
           console.log('!=== null', gennerate);
+          console.log('!=== null', status);
           db.query(
-            'INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            'INSERT INTO create_order(id, created_at, hospital_name, province, region, csc, customer_name, customer_phone, customer_email, cabin_type, express, deliver_date, sequence, vendor_group, amount, donate, vendor_name, cabin_serial_number,cabin_status,cabin_error_detail) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [
               id,
               created_at,
@@ -313,6 +318,8 @@ app.post('/create_cabin_order', (req, res) => {
               donate,
               vendor_name,
               gennerate,
+              status,
+              detail,
             ],
             (err, result) => {
               if (err) {
@@ -448,34 +455,34 @@ app.put('/updateBroken', (req, res) => {
   );
 });
 
-// แก้ อุปกรณ์ ***********
-app.put('/editTool', (req, res) => {
-  const id = req.body.id;
-  const sendDate = req.body.sendDate;
-  const comname = req.body.comname;
-  const brand = req.body.brand;
-  const spec = req.body.spec;
-  const quality = req.body.quality;
-  const lifetime = req.body.lifetime;
-  const supplier = req.body.upplier;
-
+app.get('/selected_cabin_info', (req, res) => {
+  const cabin_serial_number = req.params.cabin_serial_number;
+  console.log(cabin_serial_number);
   db.query(
-    `UPDATE create_order SET 
-    cabin_tool_lasttime_maintenance = ?, 
-    cabin_tool = ?, 
-    cabin_tool_name = ?, 
-    cabin_spec = ?, 
-    cabin_tool_amount = ?,
-    cabin_expired = ?,
-    cabin_expired = ?,
-    cabin_toot_buy_from = ?
-    `,
-    [sendDate, comname, brand, spec, quality, lifetime, supplier],
+    'SELECT id FROM create_order WHERE cabin_status = ?',
+    'error',
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        res.send('Inserted');
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.get('/selected_cabin_info_error', (req, res) => {
+  const cabin_serial_number = req.params.cabin_serial_number;
+  console.log(cabin_serial_number);
+  db.query(
+    'SELECT * FROM create_order WHERE cabin_status = ?',
+    'error',
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        res.send(result);
       }
     }
   );
@@ -483,13 +490,13 @@ app.put('/editTool', (req, res) => {
 
 app.delete('/delete_account/:id', (req, res) => {
   const id = req.params.id;
-  // db.query('DELETE FROM user_account WHERE id = ?', id, (err, result) => {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     res.send(result);
-  //   }
-  // });
+  db.query('DELETE FROM user_account WHERE id = ?', id, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
 app.get('/create_order', (req, res) => {
@@ -500,6 +507,19 @@ app.get('/create_order', (req, res) => {
       res.send(result);
     }
   });
+});
+
+app.get('/create_order_error', (req, res) => {
+  db.query(
+    `SELECT * FROM create_order WHERE cabin_status = 'error'`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
 });
 
 app.get('/user_account', (req, res) => {
@@ -520,6 +540,39 @@ app.get('/login', (req, res) => {
         console.log(err);
       } else {
         res.send(result);
+      }
+    }
+  );
+});
+
+// แก้ อุปกรณ์ ***********
+app.put('/editTool', (req, res) => {
+  const id = req.body.id;
+  const sendDate = req.body.sendDate;
+  const comname = req.body.comname;
+  const brand = req.body.brand;
+  const spec = req.body.spec;
+  const quality = req.body.quality;
+  const lifetime = req.body.lifetime;
+  const supplier = req.body.supplier;
+  // id cabin_tool_edit_date cabin_tool_name cabin_spec cabin_tool_amount cabin_tool_buy_from
+
+  console.log(id);
+  console.log(sendDate);
+  console.log(comname);
+  console.log(brand);
+  console.log(spec);
+  console.log(quality);
+  console.log(supplier);
+  console.log(lifetime);
+  db.query(
+    `UPDATE item_in_order SET  cabin_tool_edit_date = ? ,cabin_tool = ? ,cabin_tool_name = ? ,cabin_spec = ? ,cabin_tool_amount = ? ,cabin_expired = ?,cabin_tool_buy_from = ? where id = ?`,
+    [sendDate, comname, brand, spec, quality, lifetime, supplier, id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send('Inserted');
       }
     }
   );

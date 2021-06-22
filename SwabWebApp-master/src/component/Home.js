@@ -21,6 +21,20 @@ import {
   faCaretDown,
 } from '@fortawesome/free-solid-svg-icons';
 
+// The cascading DropDownList is a series of two or more DropDownLists
+// where each DropDownList is filtered based on the selected option from the previous DropDownList.
+import { dataCategories, dataProducts, dataOrders } from './option';
+
+const defaultItemCategory = {
+  categoryName: 'Select Category ...',
+};
+const defaultItemProduct = {
+  productName: 'Select Product ...',
+};
+const defaultItemOrder = {
+  orderName: 'Select Order ...',
+};
+
 function Home() {
   const [key, setKey] = useState('all');
   const [sendDate, setSendDate] = useState('');
@@ -34,8 +48,11 @@ function Home() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [cabin_order_list, setCabinOrderList] = useState([]);
+  const [cabin_order_error_list, setCabinOrderErrorList] = useState([]);
   const [cabin_broken_order_list, setBrokenCabinOrderList] = useState([]);
   const [cabin_info, setCabin_info] = useState([]);
+  const [cabin_info_change, setCabin_info_change] = useState([]);
+  const [cabin_info_error, setCabin_info_error] = useState([]);
   const [selectedId, setSelected] = useState('');
   const [toolId, setToolId] = useState('');
 
@@ -44,6 +61,7 @@ function Home() {
   const [csc, setCsc] = useState('');
 
   // รายละเอียดแจ้งซ่อม
+  const [alert, setAlert] = useState([]);
   const [hospitalName, setHospitalName] = useState('');
   const [cabin_serial, setCabin_Serial] = useState('');
   const [region, setRegion] = useState('');
@@ -58,10 +76,30 @@ function Home() {
   const user = window.localStorage.getItem('user');
   console.log(user);
 
+  const alert_cabin = () => {
+    setAlert([
+      ...alert,
+      {
+        hospitalName: hospitalName,
+        cabin_serial: cabin_serial,
+        // เลือกภาคให้แจ้งmail
+        region: region,
+        detail: detail,
+      },
+    ]);
+  };
+
   // all cabin order
   useEffect(() => {
     Axios.get('http://localhost:3003/create_order').then((response) => {
       setCabinOrderList(response.data);
+    });
+  }, []);
+
+  // all error order
+  useEffect(() => {
+    Axios.get('http://localhost:3003/create_order_error').then((response) => {
+      setCabinOrderErrorList(response.data);
     });
   }, []);
 
@@ -80,6 +118,32 @@ function Home() {
     );
   };
 
+  // cabin tools change detail
+  useEffect(() => {
+    Axios.get(`http://localhost:3003/selected_cabin_info`).then((response) => {
+      setCabin_info_change(
+        response.data
+        // cabin_info.filter((val) => {
+        //   return val.cabin_type != cabin_type;
+        // })
+      );
+    });
+  }, []);
+
+  // cabin tools change detail
+  useEffect(() => {
+    Axios.get(`http://localhost:3003/selected_cabin_info_error`).then(
+      (response) => {
+        setCabin_info_error(
+          response.data
+          // cabin_info.filter((val) => {
+          //   return val.cabin_type != cabin_type;
+          // })
+        );
+      }
+    );
+  }, []);
+
   // รับข้อมูลแจ้งซ่อม **************
   const getSelectedBrokenCabin_info = () => {
     Axios.get(`http://localhost:3003/selected_Broken_cabin_info/`).then(
@@ -97,47 +161,32 @@ function Home() {
   // เวลาตอนแจ้ง
   const now = dayjs().format('YYYY-MM-DD H:mm:ss');
   // ส่งข้อมูลแจ้งซ่อม ************
-  const updateBrokenCabin = (cabin_serial_number) => {
-    Axios.put(`http://localhost:3003/updateBroken/`, {
-      // เวลาตอนแจ้ง
-      created_at: now,
-      cabin_serial_number: cabin_serial_number,
-      detail: detail,
-      status: newStatus,
-    }).then((response) => {
-      setCabin_info(
-        cabin_info.map((val) => {
-          return val.cabin_serial_number == cabin_serial_number
-            ? {
-                id: null,
-                hospital_Name: hospitalName,
-                created_at: now,
-                region: region,
-                cabin_serial_number: cabin_serial_number,
-                detail: detail,
-                status: newStatus,
-              }
-            : val;
-        })
-        //   [
-        //   ...cabin_info,
-        //   {
-        //     id: null,
-        //     hospital_Name: hospitalName,
-        //     created_at: now,
-        //     region: region,
-        //     cabin_serial_number: cabin_serial_number,
-        //     detail: detail,
-        //   },
-        // ]
-      );
+  const postBrokenCabin = (cabin_serial_number) => {
+    Axios.post(
+      `http://localhost:3003/selected_Broken_cabin_info/${cabin_serial_number}`,
+      {
+        id: null,
+        hospital_Name: hospitalName,
+        // เวลาตอนแจ้ง
+        created_at: now,
+        region: region,
+        cabin_serial_number: cabin_serial_number,
+        detail: detail,
+      }
+    ).then(() => {
+      setCabin_info([
+        ...cabin_info,
+        {
+          id: null,
+          hospital_Name: hospitalName,
+          created_at: now,
+          region: region,
+          cabin_serial_number: cabin_serial_number,
+          detail: detail,
+        },
+      ]);
     });
   };
-  // const getCabin_info = () => {
-  //   Axios.get("http://localhost:3003/cabin_info").then((response) => {
-  //     setCabin_info(response.data);
-  //   });
-  // };
 
   // ส่งข้อมูล edit อุปกรณ์ ***********************
   const editTool = (id) => {
@@ -596,27 +645,20 @@ function Home() {
                 </Modal>
               </Accordion>
             </Tab>
-            <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่"></Tab>
-            <Tab
-              eventKey="alert"
-              title={
-                <div>
-                  แจ้งซ่อม <Badge style={{ background: 'red' }}>9</Badge>
-                  <span className="visually-hidden">unread messages</span>
-                </div>
-              }
-            >
+            <Tab eventKey="change-equitment" title="เปลี่ยนอะไหล่">
               <Table style={{ width: '100%' }}>
                 <Card>
                   <Card.Header>
                     <thead>
                       <tr>
                         <th>Serial number</th>
+                        <th>Serial number</th>
+                        <th>Serial number</th>
                         <th>ชื่อโรงพยาบาล</th>
                         <th>รายละเอียด</th>
                       </tr>
                     </thead>
-                    {cabin_broken_order_list.map((val, key) => {
+                    {cabin_info_change.map((val, key) => {
                       return (
                         <tbody>
                           <tr>
@@ -629,6 +671,82 @@ function Home() {
                     })}
                   </Card.Header>
                 </Card>
+              </Table>
+            </Tab>
+            {/* แจ้งซ่อม */}
+            <Tab
+              eventKey="alert"
+              title={
+                <div>
+                  แจ้งซ่อม <Badge style={{ background: 'red' }}>9</Badge>
+                  <span className="visually-hidden">unread messages</span>
+                </div>
+              }
+            >
+              {cabin_order_error_list.map((val, key) => {
+                const created_at = dayjs(val.created_at).format('YYYY-MM-DD');
+                const deliver_date = dayjs(val.deliver_date).format(
+                  'YYYY-MM-DD'
+                );
+
+                return (
+                  <Card key={val.cabin_serial_number}>
+                    <Card.Header>
+                      <Table responsive style={{ borderBottom: '2px' }}>
+                        <thead>
+                          <tr>
+                            <th>เลขตู้</th>
+                            <th>ข้อมูลลูกค้า</th>
+                            <th>ประเภทตู้</th>
+                            <th>รานละเอียดการแจ้งซ่อม</th>
+                            <th>วันที่แจ้งซ่อม</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr style={{ borderBottom: '2px' }}>
+                            <td>{val.cabin_serial_number}</td>
+                            <td>
+                              {val.hospital_name} {val.customer_name}
+                              {val.customer_phone} <br />
+                              {val.customer_email}
+                            </td>
+                            <td>{val.cabin_type}</td>
+                            <td>{val.cabin_error_detail}</td>
+                            <td>{val.edit_date}</td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </Card.Header>
+                  </Card>
+                );
+              })}
+
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th className="col-2">วันที่</th>
+                    <th className="col-2">เลขตู้</th>
+                    <th className="col-2">Vendor Name</th>
+                    <th className="col-2">Hospital Name</th>
+                    <th className="col-2">ประเภทตู้</th>
+                    <th className="col-2">รายละเอียด</th>
+                  </tr>
+                </thead>
+                {cabin_info_error.map((val, key) => {
+                  return (
+                    <tbody>
+                      <tr>
+                        <th>{val.edit_date}</th>
+                        <th>{val.cabin_serial_number}</th>
+                        <th>{val.vendor_name}</th>
+                        <th>{val.hospital_name}</th>
+                        <th>{val.cabin_type}</th>
+                        <th>{val.cabin_error_detail}</th>
+                        <th></th>
+                      </tr>
+                    </tbody>
+                  );
+                })}
               </Table>
             </Tab>
           </Tabs>
@@ -836,7 +954,7 @@ function Home() {
                 variant="primary"
                 onClick={() => {
                   setShowAlert(!showAlert);
-                  updateBrokenCabin(cabin_serial);
+                  postBrokenCabin(cabin_serial);
                   console.log(cabin_serial);
                   // sendAlert();
                 }}
