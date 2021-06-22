@@ -173,14 +173,14 @@ export default function Orderform() {
                 <option value="C">Central</option>
                 <option value="N">North</option>
                 <option value="S">South</option>
-                <option value="E">Central East</option>
-                <option value="W">Central West</option>
+                <option value="CE">Central East</option>
+                <option value="CW">Central West</option>
                 <option value="NE">Northeast</option>
               </select>
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="csc">
               <Form.Label>CSC</Form.Label>
               <select
                 className="form-control"

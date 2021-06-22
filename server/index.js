@@ -410,10 +410,10 @@ app.get('/selected_cabin_info/:cabin_serial_number', (req, res) => {
   );
 });
 
-app.get('/selected_Broken_cabin_info/:cabin_serial_number', (req, res) => {
-  const cabin_serial_number = req.params.cabin_serial_number;
+// get ตู้ที่พัง **************
+app.get('/selected_Broken_cabin_info/', (req, res) => {
   db.query(
-    'SELECT * FROM create_order WHERE cabin_serial_number = ?',
+    'SELECT * FROM create_order ',
     cabin_serial_number,
     (err, result) => {
       if (err) {
@@ -425,15 +425,71 @@ app.get('/selected_Broken_cabin_info/:cabin_serial_number', (req, res) => {
   );
 });
 
+//  put ตู้ที่พัง ******************
+app.put('/updateBroken', (req, res) => {
+  const id = req.body.id;
+  const hospital_Name = req.body.hospital_Name;
+  const cabin_serial_number = req.params.cabin_serial_number;
+  const created_at = req.body.created_at;
+  const region = req.body.region;
+  const detail = req.body.detail;
+  const status = req.body.status;
+
+  db.query(
+    'UPDATE create_order SET  created_at = ?, detail = ?, status = ?  WHERE cabin_serial_number = ?',
+    [created_at, , detail, status, cabin_serial_number],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send('Inserted');
+      }
+    }
+  );
+});
+
+// แก้ อุปกรณ์ ***********
+app.put('/editTool', (req, res) => {
+  const id = req.body.id;
+  const sendDate = req.body.sendDate;
+  const comname = req.body.comname;
+  const brand = req.body.brand;
+  const spec = req.body.spec;
+  const quality = req.body.quality;
+  const lifetime = req.body.lifetime;
+  const supplier = req.body.upplier;
+
+  db.query(
+    `UPDATE create_order SET 
+    cabin_tool_lasttime_maintenance = ?, 
+    cabin_tool = ?, 
+    cabin_tool_name = ?, 
+    cabin_spec = ?, 
+    cabin_tool_amount = ?,
+    cabin_expired = ?,
+    cabin_expired = ?,
+    cabin_toot_buy_from = ?
+    `,
+    [sendDate, comname, brand, spec, quality, lifetime, supplier],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send('Inserted');
+      }
+    }
+  );
+});
+
 app.delete('/delete_account/:id', (req, res) => {
   const id = req.params.id;
-  db.query('DELETE FROM user_account WHERE id = ?', id, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+  // db.query('DELETE FROM user_account WHERE id = ?', id, (err, result) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     res.send(result);
+  //   }
+  // });
 });
 
 app.get('/create_order', (req, res) => {
@@ -455,8 +511,6 @@ app.get('/user_account', (req, res) => {
     }
   });
 });
-
-// app.put('/editTool/:id',(req,res)=>{})ss
 
 app.get('/login', (req, res) => {
   db.query(

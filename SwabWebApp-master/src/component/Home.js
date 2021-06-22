@@ -39,12 +39,16 @@ function Home() {
   const [selectedId, setSelected] = useState('');
   const [toolId, setToolId] = useState('');
 
+  // เลือก filter
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [csc, setCsc] = useState('');
+
   // รายละเอียดแจ้งซ่อม
-  const [alert, setAlert] = useState([]);
   const [hospitalName, setHospitalName] = useState('');
   const [cabin_serial, setCabin_Serial] = useState('');
   const [region, setRegion] = useState('');
   const [detail, setDetail] = useState('');
+  const [newStatus, setNewStatus] = useState('');
 
   // show แจ้งซ่อม
   const [showAlert, setShowAlert] = useState(false);
@@ -53,19 +57,6 @@ function Home() {
   // get user
   const user = window.localStorage.getItem('user');
   console.log(user);
-
-  const alert_cabin = () => {
-    setAlert([
-      ...alert,
-      {
-        hospitalName: hospitalName,
-        cabin_serial: cabin_serial,
-        // เลือกภาคให้แจ้งmail
-        region: region,
-        detail: detail,
-      },
-    ]);
-  };
 
   // all cabin order
   useEffect(() => {
@@ -89,16 +80,56 @@ function Home() {
     );
   };
 
-  // ส่งข้อมูลแจ้งซ่อม
-  const getSelectedBrokenCabin_info = (cabin_serial_number) => {
-    Axios.get(
-      `http://localhost:3003/selected_Broken_cabin_info/${cabin_serial_number}`
-    ).then((response) => {
-      setBrokenCabinOrderList(
-        response.data
-        // cabin_order_list.filter((val) => {
-        //   return val.cabin_serial_number != cabin_serial_number;
-        // })
+  // รับข้อมูลแจ้งซ่อม **************
+  const getSelectedBrokenCabin_info = () => {
+    Axios.get(`http://localhost:3003/selected_Broken_cabin_info/`).then(
+      (response) => {
+        setBrokenCabinOrderList(
+          response.data
+          // cabin_order_list.filter((val) => {
+          //   return val.cabin_serial_number != cabin_serial_number;
+          // })
+        );
+      }
+    );
+  };
+
+  // เวลาตอนแจ้ง
+  const now = dayjs().format('YYYY-MM-DD H:mm:ss');
+  // ส่งข้อมูลแจ้งซ่อม ************
+  const updateBrokenCabin = (cabin_serial_number) => {
+    Axios.put(`http://localhost:3003/updateBroken/`, {
+      // เวลาตอนแจ้ง
+      created_at: now,
+      cabin_serial_number: cabin_serial_number,
+      detail: detail,
+      status: newStatus,
+    }).then((response) => {
+      setCabin_info(
+        cabin_info.map((val) => {
+          return val.cabin_serial_number == cabin_serial_number
+            ? {
+                id: null,
+                hospital_Name: hospitalName,
+                created_at: now,
+                region: region,
+                cabin_serial_number: cabin_serial_number,
+                detail: detail,
+                status: newStatus,
+              }
+            : val;
+        })
+        //   [
+        //   ...cabin_info,
+        //   {
+        //     id: null,
+        //     hospital_Name: hospitalName,
+        //     created_at: now,
+        //     region: region,
+        //     cabin_serial_number: cabin_serial_number,
+        //     detail: detail,
+        //   },
+        // ]
       );
     });
   };
@@ -110,8 +141,32 @@ function Home() {
 
   // ส่งข้อมูล edit อุปกรณ์ ***********************
   const editTool = (id) => {
-    Axios.put(`http://localhost:3003/editTool/${id}`, {}).then(() => {
-      setCabin_info([...cabin_info, {}]);
+    Axios.put(`http://localhost:3003/editTool`, {
+      id: id,
+      sendDate: sendDate,
+      comname: comname,
+      brand: brand,
+      spec: spec,
+      quality: quality,
+      lifetime: lifetime,
+      supplier: supplier,
+    }).then((response) => {
+      setCabin_info(
+        cabin_info.map((val) => {
+          return val.id == id
+            ? {
+                id: id,
+                sendDate: sendDate,
+                comname: comname,
+                brand: brand,
+                spec: spec,
+                quality: quality,
+                lifetime: lifetime,
+                supplier: supplier,
+              }
+            : val;
+        })
+      );
     });
   };
 
@@ -127,7 +182,10 @@ function Home() {
               <Card.Body>
                 <Card.Title className="text-center">จำนวนตู้ทั้งหมด</Card.Title>
                 <Card.Text>
-                  <p className="text-success fs-1 text-center">1234</p>
+                  {/* count order ************************************* */}
+                  <p className="text-success fs-1 text-center">
+                    {cabin_order_list.length}
+                  </p>
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -153,18 +211,36 @@ function Home() {
             </Card>
           </CardGroup>
           <ButtonGroup className="mt-3">
-            <DropdownButton
+            {/* <DropdownButton
               size="lg"
               className="mr-2"
               variant="outline-primary"
               id="dropdown-basic-button"
               title="ภาค"
             >
-              <Dropdown.Item href="#/action-1">N</Dropdown.Item>
-              <Dropdown.Item href="#/action-2">NE </Dropdown.Item>
-              <Dropdown.Item href="#/action-3">S</Dropdown.Item>
-            </DropdownButton>
-            <DropdownButton
+              <Dropdown.Item href="#/action-1">Central</Dropdown.Item>
+              <Dropdown.Item href="#/action-2">North </Dropdown.Item>
+              <Dropdown.Item href="#/action-3">South</Dropdown.Item>
+              <Dropdown.Item href="#/action-3">Central East</Dropdown.Item>
+              <Dropdown.Item href="#/action-3">Central West</Dropdown.Item>
+              <Dropdown.Item href="#/action-3">Northeast</Dropdown.Item>
+            </DropdownButton> */}
+            <Form.Group className="mr-2" controlId="region">
+              <select
+                className="form-control"
+                id="region"
+                onChange={(e) => setSelectedRegion(e.target.value)}
+              >
+                <option value="">เลือกภาค</option>
+                <option value="C">Central</option>
+                <option value="N">North</option>
+                <option value="S">South</option>
+                <option value="CE">Central East</option>
+                <option value="CW">Central West</option>
+                <option value="NE">Northeast</option>
+              </select>
+            </Form.Group>
+            {/* <DropdownButton
               size="lg"
               className="mr-2"
               variant="outline-primary"
@@ -172,11 +248,103 @@ function Home() {
               title="CSC"
             >
               <Dropdown.Item href="#/action-1">CSC เชียงใหม่</Dropdown.Item>
-            </DropdownButton>
-
-            <Button variant="danger" onClick={() => setShowAlert(!showAlert)}>
-              แจ้งซ่อม
-            </Button>
+            </DropdownButton> */}
+            <Form.Group className="mb-3 mr-2" controlId="csc">
+              <select
+                className="form-control"
+                id="region"
+                onChange={(e) => setCsc(e.target.value)}
+              >
+                <option value="">เลือก CSC</option>
+                <option value="RMC Production and Service Metro 1">
+                  RMC Production and Service Metro 1
+                </option>
+                <option value="RMC Production and Service Metro 2">
+                  RMC Production and Service Metro 2
+                </option>
+                <option value="RMC Production and Service Metro 3">
+                  RMC Production and Service Metro 3
+                </option>
+                <option value="RMC Production and Service Metro 4">
+                  RMC Production and Service Metro 4
+                </option>
+                <option value="CPAC Solution Center กรุงเทพฯ และปริมณฑล">
+                  CPAC Solution Center กรุงเทพฯ และปริมณฑล
+                </option>
+                <option value="CPAC Solution Center กระบี่">
+                  CPAC Solution Center กระบี่
+                </option>
+                <option value="CPAC Solution Center สุราษฎร์ธานี">
+                  CPAC Solution Center สุราษฎร์ธานี
+                </option>
+                <option value="CPAC Solution Center ภูเก็ต">
+                  CPAC Solution Center ภูเก็ต
+                </option>
+                <option value="CPAC Solution Center นครศรีธรรมราช">
+                  CPAC Solution Center นครศรีธรรมราช
+                </option>
+                <option value="CPAC Solution Center สงขลา">
+                  CPAC Solution Center สงขลา
+                </option>
+                <option value="CPAC Solution Center ฉะเชิงเทรา">
+                  CPAC Solution Center ฉะเชิงเทรา
+                </option>
+                <option value="CPAC Solution Center ชลบุรี">
+                  CPAC Solution Center ชลบุรี
+                </option>
+                <option value="CPAC Solution Center ระยอง">
+                  CPAC Solution Center ระยอง
+                </option>
+                <option value="CPAC Solution Center สระบุรี">
+                  CPAC Solution Center สระบุรี
+                </option>
+                <option value="CPAC Solution Center อยุธยา">
+                  CPAC Solution Center อยุธยา
+                </option>
+                <option value="CPAC Solution Center นครปฐม">
+                  CPAC Solution Center นครปฐม
+                </option>
+                <option value="CPAC Solution Center สมุทรสาคร">
+                  CPAC Solution Center สมุทรสาคร
+                </option>
+                <option value="CPAC Solution Center ลำปาง">
+                  CPAC Solution Center ลำปาง
+                </option>
+                <option value="CPAC Solution Center เชียงใหม่">
+                  CPAC Solution Center เชียงใหม่
+                </option>
+                <option value="CPAC Solution Center เชียงราย">
+                  CPAC Solution Center เชียงราย
+                </option>
+                <option value="CPAC Solution Center พิษณุโลก">
+                  CPAC Solution Center พิษณุโลก
+                </option>
+                <option value="CPAC Solution Center นครสวรรค์">
+                  CPAC Solution Center นครสวรรค์
+                </option>
+                <option value="CPAC Solution Center นครราชสีมา">
+                  CPAC Solution Center นครราชสีมา
+                </option>
+                <option value="CPAC Solution Center สกลนคร">
+                  CPAC Solution Center สกลนคร
+                </option>
+                <option value="CPAC Solution Center อุดรธานี">
+                  CPAC Solution Center อุดรธานี
+                </option>
+                <option value="CPAC Solution Center อุบลราชธานี">
+                  CPAC Solution Center อุบลราชธานี
+                </option>
+                <option value="CPAC Solution Center ขอนแก่น">
+                  CPAC Solution Center ขอนแก่น
+                </option>
+              </select>
+            </Form.Group>
+            <div>
+              <Button variant="primary">filter</Button>{' '}
+              <Button variant="danger" onClick={() => setShowAlert(!showAlert)}>
+                แจ้งซ่อม
+              </Button>
+            </div>
           </ButtonGroup>
 
           {/* tab all */}
@@ -316,29 +484,34 @@ function Home() {
                   );
 
                   return (
+                    // tab all, show all order
                     <Card key={val.cabin_serial_number}>
                       <Card.Header>
-                        <Table responsive style={{ borderBottom: '2px' }}>
+                        <Table responsive>
                           <thead>
                             <tr>
-                              <th>เลขตู้</th>
-                              <th>Vendor Name</th>
-                              <th>ประเภทตู้</th>
-                              <th>Status วันที่</th>
-                              <th>ข้อมูลลูกค้า</th>
-                              <th>วันที่ ส่ง</th>
+                              <th className="col-2">เลขตู้</th>
+                              <th className="col-2">Vendor Name</th>
+                              <th className="col-2">ประเภทตู้</th>
+                              <th className="col-2">Status วันที่</th>
+                              <th className="col-2">ข้อมูลลูกค้า</th>
+                              <th className="col-2">วันที่ ส่ง</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr style={{ borderBottom: '2px' }}>
+                            <tr>
                               <td>
                                 <Accordion.Toggle
                                   as={Button}
                                   variant="link"
                                   eventKey="3"
                                   onClick={() => {
-                                    console.log('cabin type ' + val.cabin_type);
-                                    getSelectedCabin_info(val.cabin_type);
+                                    console.log(
+                                      'cabin type ' + val.cabin_serial_number
+                                    );
+                                    getSelectedCabin_info(
+                                      val.cabin_serial_number
+                                    );
                                     setShowInfo(!showInfo);
                                   }}
                                 >
@@ -350,9 +523,10 @@ function Home() {
                               <td>{val.cabin_type}</td>
                               <td>{created_at}</td>
                               <td>
-                                {val.hospital_name} {val.customer_name}
-                                {val.customer_phone} <br />
-                                {val.customer_email}
+                                {val.hospital_name}
+                                <br /> {val.customer_name}
+                                <br /> {val.customer_phone}
+                                <br /> {val.customer_email}
                               </td>
                               <td>{deliver_date}</td>
                             </tr>
@@ -362,6 +536,7 @@ function Home() {
                     </Card>
                   );
                 })}
+                {/* tab all show all component in each order */}
                 <Modal
                   size="xl"
                   show={showInfo}
@@ -376,7 +551,7 @@ function Home() {
                     <Table responsive style={{ borderBottom: '2px' }}>
                       <thead>
                         <tr style={{ borderBottom: '2px' }}>
-                          <th>ประเภทห้อง</th>
+                          <th>ID</th>
                           <th>อุปกรณ์</th>
                           <th>ยี่ห้อ</th>
                           <th>spec</th>
@@ -391,13 +566,13 @@ function Home() {
                         return (
                           <tbody>
                             <tr style={{ borderBottom: '2px' }}>
-                              <td>{val.cabin_type}</td>
+                              <td>{val.id}</td>
                               <td>{val.cabin_tool}</td>
                               <td>{val.cabin_tool_name}</td>
                               <td>{val.cabin_spec}</td>
-                              <td>{val.cabin_toot_amount}</td>
-                              <td>{val.cabin_expired}</td>
-                              <th>{val.cabin_toot_buy_from}</th>
+                              <td>{val.cabin_tool_amount}</td>
+                              <td>{val.cabin_tool_edit_date}</td>
+                              <th>{val.cabin_tool_buy_from}</th>
                               <td>{val.cabin_expired}</td>
 
                               <th>
@@ -405,9 +580,11 @@ function Home() {
                                   onClick={() => {
                                     handleShow();
                                     setToolId(val.id);
+                                    editTool(val.id);
                                   }}
                                 >
-                                  แก้ไข
+                                  {' '}
+                                  แก้ไข{' '}
                                 </Button>{' '}
                               </th>
                             </tr>
@@ -659,12 +836,12 @@ function Home() {
                 variant="primary"
                 onClick={() => {
                   setShowAlert(!showAlert);
-                  getSelectedBrokenCabin_info(cabin_serial);
+                  updateBrokenCabin(cabin_serial);
                   console.log(cabin_serial);
                   // sendAlert();
                 }}
               >
-                Submit
+                แจ้งซ่อม
               </Button>
             </Modal.Footer>
           </Modal>

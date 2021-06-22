@@ -126,8 +126,8 @@ export default function Accountform() {
                 <option value="C">Central</option>
                 <option value="N">North</option>
                 <option value="S">South</option>
-                <option value="E">Central East</option>
-                <option value="W">Central West</option>
+                <option value="CE">Central East</option>
+                <option value="CW">Central West</option>
                 <option value="NE">Northeast</option>
               </select>
             </Form.Group>

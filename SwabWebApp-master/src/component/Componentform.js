@@ -138,7 +138,7 @@ export default function Orderform() {
                     <option value="">เลือกประเภทห้อง</option>
                     <option value="P">ห้องความดันบวก Positive</option>
                     <option value="N">ห้องความดันลบ Negative</option>
-                    <option value="M">Mobile</option>
+                    <option value="M">ตู้เคลื่อนที่ Mobile</option>
                   </select>
                 </Form.Group>
               </Col>
@@ -153,11 +153,12 @@ export default function Orderform() {
                     onChange={(e) => setRegion(e.target.value)}
                   >
                     <option value="">เลือกภาค</option>
-                    <option value="N">N</option>
-                    <option value="S">S</option>
-                    <option value="E">E</option>
-                    <option value="W">W</option>
-                    <option value="NE">NE</option>
+                    <option value="C">Central</option>
+                    <option value="N">North</option>
+                    <option value="S">South</option>
+                    <option value="CE">Central East</option>
+                    <option value="CW">Central West</option>
+                    <option value="NE">Northeast</option>
                   </select>
                 </Form.Group>
               </Col>
@@ -358,8 +359,7 @@ export default function Orderform() {
                       spec: {val.cabin_spec} จำนวน: {val.cabin_toot_amount}
                     </p>
                     <p className="card-text">
-                      จำนวน: {val.cabin_toot_amount} วันหมด (เดือน):{' '}
-                      {val.cabin_expired}
+                      วันหมด (เดือน): {val.cabin_expired}
                     </p>
                     <p className="card-text">
                       ซื้อจาก: {val.cabin_toot_buy_from}
