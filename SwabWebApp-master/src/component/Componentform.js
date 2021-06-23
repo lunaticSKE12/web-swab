@@ -44,6 +44,10 @@ export default function Orderform() {
     },
   ]);
 
+  // show text only web
+  const [cabinType_text, setCabinType_text] = useState('');
+  const [textRegion, setTextRegion] = useState('');
+
   // เก็บข็อมูลจาก api
   const [cabin_info, setCabin_info] = useState([]);
 
@@ -133,7 +137,14 @@ export default function Orderform() {
                   <select
                     className="form-control"
                     id="cabin_type"
-                    onChange={(event) => setCabin_type(event.target.value)}
+                    onChange={(event) => {
+                      setCabin_type(event.target.value);
+                      // get selected text
+                      const select = event.target;
+                      const textCabinType = select.selectedOptions[0].text;
+                      setCabinType_text(textCabinType);
+                      console.log(textCabinType);
+                    }}
                   >
                     <option value="">เลือกประเภทห้อง</option>
                     <option value="P">ห้องความดันบวก Positive</option>
@@ -150,7 +161,14 @@ export default function Orderform() {
                   <select
                     className="form-control"
                     id="region"
-                    onChange={(e) => setRegion(e.target.value)}
+                    onChange={(e) => {
+                      setRegion(e.target.value);
+                      // get selected text
+                      const select = e.target;
+                      const textRegion = select.selectedOptions[0].text;
+                      setTextRegion(textRegion);
+                      console.log(textRegion);
+                    }}
                   >
                     <option value="">เลือกภาค</option>
                     <option value="C">Central</option>
@@ -231,9 +249,10 @@ export default function Orderform() {
                       </div>
                     );
                   })}
-                  <div style={{ marginTop: 20 }}>
+                  {/* Show add tiem ****************************/}
+                  {/* <div style={{ marginTop: 20 }}>
                     {JSON.stringify(inputList)}
-                  </div>
+                  </div> */}
                 </div>
                 {/* <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>เพิ่มอุปกรณ์ และ อายุการใช้งาน</Form.Label>
@@ -309,17 +328,34 @@ export default function Orderform() {
             keyboard={false}
           >
             <Modal.Header closeButton>
-              <Modal.Title>serial number ใหม่</Modal.Title>
+              <Modal.Title>อุปกรณ์ใหม่</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <p>type: {cabin_type}</p>
-              <p>ภาค: {region}</p>
-              <p>อุปกรณ์ : {comname}</p>
+              <p>
+                type: {cabin_type} {cabinType_text}
+              </p>
+              <p>
+                ภาค: {region} {textRegion}
+              </p>
+              {/* <p>อุปกรณ์ : {comname}</p>
               <p>ยี่ห้อ : {brand}</p>
               <p>spec : {spec}</p>
               <p>จำนวน : {quality}</p>
               <p>อายุการใช้งาน : {lifetime}</p>
-              <p>แหล่งที่ซื้อ : {supplier}</p>
+              <p>แหล่งที่ซื้อ : {supplier}</p> */}
+              {inputList.map((val, key) => {
+                return (
+                  <div>
+                    <p>อุปกรณ์ {val.item}</p>
+                    <p>ยี่ห้อ {val.brand}</p>
+                    <p>spec {val.spec}</p>
+                    <p>จำนวน {val.quantity}</p>
+                    <p>อายุการใช้งาน : {val.expiredate}</p>
+                    <p>แหล่งที่ซื้อ : {val.buy_from}</p>
+                    <hr></hr>
+                  </div>
+                );
+              })}
             </Modal.Body>
             <Modal.Footer>
               <Button
@@ -349,21 +385,14 @@ export default function Orderform() {
               return (
                 <div className="card mt-3" key={val.id}>
                   <div className="card-body text-left">
-                    <p className="card-text">
-                      ภาค: {val.region} ประเภทห้อง: {val.cabin_type}
-                    </p>
-                    <p className="card-text">
-                      อุปกรณ์: {val.cabin_tool} ยี่ห้อ: {val.cabin_tool_name}
-                    </p>
-                    <p className="card-text">
-                      spec: {val.cabin_spec} จำนวน: {val.cabin_toot_amount}
-                    </p>
-                    <p className="card-text">
-                      วันหมด (เดือน): {val.cabin_expired}
-                    </p>
-                    <p className="card-text">
-                      ซื้อจาก: {val.cabin_toot_buy_from}
-                    </p>
+                    <p>ภาค: {val.region}</p>
+                    <p>ประเภทห้อง: {val.cabin_type}</p>
+                    <p>อุปกรณ์: {val.cabin_tool} </p>
+                    <p>ยี่ห้อ: {val.cabin_tool_name}</p>
+                    <p>spec: {val.cabin_spec}</p>
+                    <p>จำนวน: {val.cabin_toot_amount}</p>
+                    <p>วันหมด (เดือน): {val.cabin_expired}</p>
+                    <p>ซื้อจาก: {val.cabin_toot_buy_from}</p>
                   </div>
                 </div>
               );

@@ -25,6 +25,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 // check login
 const user = window.localStorage.getItem('user');
 console.log(typeof user);
+
 export default function Account() {
   const [show, setShow] = useState(false);
   const [accountlist, setAccountList] = useState([]);

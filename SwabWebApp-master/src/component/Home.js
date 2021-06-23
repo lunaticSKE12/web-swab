@@ -21,20 +21,6 @@ import {
   faCaretDown,
 } from '@fortawesome/free-solid-svg-icons';
 
-// The cascading DropDownList is a series of two or more DropDownLists
-// where each DropDownList is filtered based on the selected option from the previous DropDownList.
-import { dataCategories, dataProducts, dataOrders } from './option';
-
-const defaultItemCategory = {
-  categoryName: 'Select Category ...',
-};
-const defaultItemProduct = {
-  productName: 'Select Product ...',
-};
-const defaultItemOrder = {
-  orderName: 'Select Order ...',
-};
-
 function Home() {
   const [key, setKey] = useState('all');
   const [sendDate, setSendDate] = useState('');
@@ -274,6 +260,7 @@ function Home() {
               <Dropdown.Item href="#/action-3">Central West</Dropdown.Item>
               <Dropdown.Item href="#/action-3">Northeast</Dropdown.Item>
             </DropdownButton> */}
+
             <Form.Group className="mr-2" controlId="region">
               <select
                 className="form-control"

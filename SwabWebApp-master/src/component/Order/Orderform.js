@@ -3,6 +3,9 @@ import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import Axios from 'axios';
 import dayjs from 'dayjs';
+import Select from 'react-select';
+// import option
+import { Region, CSC, Province } from '../option';
 export default function Orderform() {
   const [hosName, setHosName] = useState('');
   const [cusName, setCusName] = useState('');
@@ -13,7 +16,7 @@ export default function Orderform() {
   const [sendDate, setSendDate] = useState('');
   const [rangeSend, setRangeSend] = useState('');
   const [group, setGroup] = useState('');
-  const [quality, setQuality] = useState(0);
+  const [quality, setQuality] = useState(1);
   const [supplier, setSupplier] = useState('');
   const [serial, setSerial] = useState('');
   const [isChecked, setIsChecked] = useState(false);
@@ -24,15 +27,19 @@ export default function Orderform() {
   const [csc, setCsc] = useState('');
   const [province, setProvince] = useState('');
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // show modal before post
+  const handleShow = () => {
+    setShow(true);
+    // set state data to send database from selected options
+    setRegion(regionOption.value);
+    setCsc(cscOption.value);
+    setProvince(provinceOption.value)
+  };
   const year = dayjs().format('YY');
   const month = dayjs().format('MM');
   const handleOnChange = () => {
     setIsChecked(!isChecked);
   };
-
-  // show province only web
-  const [textProvince, setTextProvince] = useState('');
 
   // const getCabinOrder = () => {
   //   Axios.get('http://localhost:3003/cabin_order').then((response) => {
@@ -94,8 +101,17 @@ export default function Orderform() {
     });
   };
 
+  // link dropdown from option file ===============
+  const [regionOption, setRegionOption] = useState({});
+  const [cscOption, setCscOption] = useState({});
+  const [provinceOption, setProvinceOption] = useState({});
+
+  const filteredOptions = CSC.filter((o) => o.link === regionOption.value);
+  const filteredOptions2 = Province.filter((o) => o.link === cscOption.value);
+  // console.log(regionOption.value);
+  // link dropdown ================
   return (
-    <Container style={{ backgroundColor: 'white !important' }}>
+    <Container className="mb-3" style={{ backgroundColor: 'white !important' }}>
       <Form>
         <Row>
           <Col>
@@ -167,113 +183,23 @@ export default function Orderform() {
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="region">
+              {/* เลือก ภาค */}
               <Form.Label>ภาค</Form.Label>
-              <select
-                className="form-control"
-                id="region"
-                onChange={(e) => setRegion(e.target.value)}
-              >
-                <option value="">เลือกภาค</option>
-                <option value="C">Central</option>
-                <option value="N">North</option>
-                <option value="S">South</option>
-                <option value="CE">Central East</option>
-                <option value="CW">Central West</option>
-                <option value="NE">Northeast</option>
-              </select>
+              <Select
+                value={regionOption}
+                onChange={setRegionOption}
+                options={Region}
+              ></Select>
             </Form.Group>
           </Col>
           <Col>
             <Form.Group className="mb-3" controlId="csc">
               <Form.Label>CSC</Form.Label>
-              <select
-                className="form-control"
-                id="region"
-                onChange={(e) => setCsc(e.target.value)}
-              >
-                <option value="">เลือก CSC</option>
-                <option value="RMC Production and Service Metro 1">
-                  RMC Production and Service Metro 1
-                </option>
-                <option value="RMC Production and Service Metro 2">
-                  RMC Production and Service Metro 2
-                </option>
-                <option value="RMC Production and Service Metro 3">
-                  RMC Production and Service Metro 3
-                </option>
-                <option value="RMC Production and Service Metro 4">
-                  RMC Production and Service Metro 4
-                </option>
-                <option value="CPAC Solution Center กรุงเทพฯ และปริมณฑล">
-                  CPAC Solution Center กรุงเทพฯ และปริมณฑล
-                </option>
-                <option value="CPAC Solution Center กระบี่">
-                  CPAC Solution Center กระบี่
-                </option>
-                <option value="CPAC Solution Center สุราษฎร์ธานี">
-                  CPAC Solution Center สุราษฎร์ธานี
-                </option>
-                <option value="CPAC Solution Center ภูเก็ต">
-                  CPAC Solution Center ภูเก็ต
-                </option>
-                <option value="CPAC Solution Center นครศรีธรรมราช">
-                  CPAC Solution Center นครศรีธรรมราช
-                </option>
-                <option value="CPAC Solution Center สงขลา">
-                  CPAC Solution Center สงขลา
-                </option>
-                <option value="CPAC Solution Center ฉะเชิงเทรา">
-                  CPAC Solution Center ฉะเชิงเทรา
-                </option>
-                <option value="CPAC Solution Center ชลบุรี">
-                  CPAC Solution Center ชลบุรี
-                </option>
-                <option value="CPAC Solution Center ระยอง">
-                  CPAC Solution Center ระยอง
-                </option>
-                <option value="CPAC Solution Center สระบุรี">
-                  CPAC Solution Center สระบุรี
-                </option>
-                <option value="CPAC Solution Center อยุธยา">
-                  CPAC Solution Center อยุธยา
-                </option>
-                <option value="CPAC Solution Center นครปฐม">
-                  CPAC Solution Center นครปฐม
-                </option>
-                <option value="CPAC Solution Center สมุทรสาคร">
-                  CPAC Solution Center สมุทรสาคร
-                </option>
-                <option value="CPAC Solution Center ลำปาง">
-                  CPAC Solution Center ลำปาง
-                </option>
-                <option value="CPAC Solution Center เชียงใหม่">
-                  CPAC Solution Center เชียงใหม่
-                </option>
-                <option value="CPAC Solution Center เชียงราย">
-                  CPAC Solution Center เชียงราย
-                </option>
-                <option value="CPAC Solution Center พิษณุโลก">
-                  CPAC Solution Center พิษณุโลก
-                </option>
-                <option value="CPAC Solution Center นครสวรรค์">
-                  CPAC Solution Center นครสวรรค์
-                </option>
-                <option value="CPAC Solution Center นครราชสีมา">
-                  CPAC Solution Center นครราชสีมา
-                </option>
-                <option value="CPAC Solution Center สกลนคร">
-                  CPAC Solution Center สกลนคร
-                </option>
-                <option value="CPAC Solution Center อุดรธานี">
-                  CPAC Solution Center อุดรธานี
-                </option>
-                <option value="CPAC Solution Center อุบลราชธานี">
-                  CPAC Solution Center อุบลราชธานี
-                </option>
-                <option value="CPAC Solution Center ขอนแก่น">
-                  CPAC Solution Center ขอนแก่น
-                </option>
-              </select>
+              <Select
+                value={cscOption}
+                onChange={setCscOption}
+                options={filteredOptions}
+              ></Select>
             </Form.Group>
           </Col>
         </Row>
@@ -291,104 +217,19 @@ export default function Orderform() {
           <Col>
             <Form.Group className="mb-3" controlId="region">
               <Form.Label>จังหวัด</Form.Label>
-              <select
-                className="form-control"
-                id="region"
-                onChange={(e) => {
-                  setProvince(e.target.value);
-                  // myNewFunction(e.options[e.selectedIndex].text);
-                  const select = e.target;
-                  const textProvince = select.selectedOptions[0].text;
-                  setTextProvince(textProvince);
-                  console.log(textProvince);
-                }}
-              >
-                <option value="">เลือกจังหวัด</option>
-                <option value="KBI">กระบี่ </option>
-                <option value="BKK">กรุงเทพมหานคร</option>
-                <option value="KRI">กาญจนบุรี </option>
-                <option value="KSN">กาฬสินธุ์ </option>
-                <option value="KPT">กำแพงเพชร </option>
-                <option value="KKN">ขอนแก่น</option>
-                <option value="CTI">จันทบุรี</option>
-                <option value="CCO">ฉะเชิงเทรา </option>
-                <option value="CNT">ชัยนาท </option>
-                <option value="CPM">ชัยภูมิ </option>
-                <option value="CPN">ชุมพร </option>
-                <option value="CBI">ชลบุรี </option>
-                <option value="CMI">เชียงใหม่ </option>
-                <option value="CRI">เชียงราย </option>
-                <option value="TRG">ตรัง </option>
-                <option value="TRT">ตราด </option>
-                <option value="TAK">ตาก </option>
-                <option value="NYK">นครนายก </option>
-                <option value="NPT">นครปฐม </option>
-                <option value="NPM">นครพนม </option>
-                <option value="NMA">นครราชสีมา </option>
-                <option value="NST">นครศรีธรรมราช </option>
-                <option value="NSN">นครสวรรค์ </option>
-                <option value="NWT">นราธิวาส </option>
-                <option value="NAN">น่าน </option>
-                <option value="NBI">นนทบุรี </option>
-                <option value="BKN">บึงกาฬ</option>
-                <option value="BRM">บุรีรัมย์</option>
-                <option value="PKN">ประจวบคีรีขันธ์ </option>
-                <option value="PTE">ปทุมธานี </option>
-                <option value="PRI">ปราจีนบุรี </option>
-                <option value="PTN">ปัตตานี </option>
-                <option value="PYO">พะเยา </option>
-                <option value="AYA">พระนครศรีอยุธยา </option>
-                <option value="PNA">พังงา </option>
-                <option value="PCT">พิจิตร </option>
-                <option value="PLK">พิษณุโลก </option>
-                <option value="PBI">เพชรบุรี </option>
-                <option value="PNB">เพชรบูรณ์ </option>
-                <option value="PRE">แพร่ </option>
-                <option value="PLG">พัทลุง </option>
-                <option value="PKT">ภูเก็ต </option>
-                <option value="MKM">มหาสารคาม </option>
-                <option value="MDH">มุกดาหาร </option>
-                <option value="MSN">แม่ฮ่องสอน </option>
-                <option value="YST">ยโสธร </option>
-                <option value="YLA">ยะลา </option>
-                <option value="RET">ร้อยเอ็ด </option>
-                <option value="RNG">ระนอง </option>
-                <option value="RYG">ระยอง </option>
-                <option value="RBR">ราชบุรี</option>
-                <option value="LRI">ลพบุรี </option>
-                <option value="LPG">ลำปาง </option>
-                <option value="LPN">ลำพูน </option>
-                <option value="LEI">เลย </option>
-                <option value="SSK">ศรีสะเกษ</option>
-                <option value="SNK">สกลนคร</option>
-                <option value="SKA">สงขลา </option>
-                <option value="SKN">สมุทรสาคร </option>
-                <option value="SPK">สมุทรปราการ </option>
-                <option value="SKM">สมุทรสงคราม </option>
-                <option value="SKW">สระแก้ว </option>
-                <option value="SRI">สระบุรี </option>
-                <option value="SBR">สิงห์บุรี </option>
-                <option value="STI">สุโขทัย </option>
-                <option value="SPB">สุพรรณบุรี </option>
-                <option value="SNI">สุราษฎร์ธานี </option>
-                <option value="SRN">สุรินทร์ </option>
-                <option value="STN">สตูล </option>
-                <option value="NKI">หนองคาย </option>
-                <option value="NBP">หนองบัวลำภู </option>
-                <option value="ACR">อำนาจเจริญ </option>
-                <option value="UDN">อุดรธานี </option>
-                <option value="UTT">อุตรดิตถ์ </option>
-                <option value="UTI">อุทัยธานี </option>
-                <option value="UBN">อุบลราชธานี</option>
-                <option value="ATG">อ่างทอง </option>
-              </select>
+              <Select
+                value={provinceOption}
+                onChange={setProvinceOption}
+                options={filteredOptions2}
+              ></Select>
             </Form.Group>
           </Col>
         </Row>
 
         <br></br>
 
-        <Row>
+        {/* จำนวน order ************ */}
+        {/* <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>จำนวน</Form.Label>
@@ -400,7 +241,8 @@ export default function Orderform() {
               />
             </Form.Group>
           </Col>
-        </Row>
+        </Row> */}
+        {/* ********************* */}
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -437,11 +279,13 @@ export default function Orderform() {
           <p>เบอร์ติดต่อลูกค้า : {phoneNum}</p>
           <p>email : {email}</p>
           <p>ประเภทห้อง : {roomType}</p>
+          <p>ภาค : {regionOption.label}</p>
+          <p>CSC : {cscOption.label}</p>
           <p>วันที่ต้องส่งมอบ : {sendDate}</p>
           <p>
-            จังหวัด : {textProvince} {province}
+            จังหวัด : {province} {provinceOption.label}
           </p>
-          <p>จำนวน : {quality}</p>
+          {/* <p>จำนวน : {quality}</p> */}
           <p>ผู้ผลิค : {supplier}</p>
         </Modal.Body>
         <Modal.Footer>
